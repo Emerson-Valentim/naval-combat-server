@@ -2,7 +2,7 @@
   "name": "@naval-combat-server/api",
   "version": "0.0.1",
   "private": true,
-    "scripts": {
+  "scripts": {
     "start:local": "nodemon build/start.js",
     "start:server": "node build/start.js",
     "compile": "yarn tsc",
@@ -21,6 +21,7 @@
     "typescript": "^4.5.4"
   },
   "dependencies": {
+    "@naval-combat-server/domains": "0.0.1",
     "apollo-server": "^3.5.0",
     "apollo-server-lambda": "^3.6.0",
     "evs-tools": "^0.0.2",

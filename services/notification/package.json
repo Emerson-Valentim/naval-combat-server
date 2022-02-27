@@ -21,6 +21,7 @@
     "typescript": "^4.5.4"
   },
   "dependencies": {
+    "@naval-combat-server/domains": "0.0.1",
     "@socket.io/redis-adapter": "^7.1.0",
     "evs-tools": "^0.0.2",
     "ramda": "^0.27.1",
