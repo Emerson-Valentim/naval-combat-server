@@ -13,7 +13,7 @@ services:
     volumes:
       - ./services/api/build:/home/ubuntu/services/api/build
       - ./services/api/node_modules:/home/ubuntu/services/api/node_modules
-    command: yarn workspace @event-boilerplate/api start:local
+    command: yarn workspace @naval-combat-server/api start:local
     ports:
       - "4000:4000"
 
@@ -29,7 +29,7 @@ services:
     volumes:
       - ./services/notification/build:/home/ubuntu/services/notification/build
       - ./services/notification/node_modules:/home/ubuntu/services/notification/node_modules
-    command: yarn workspace @event-boilerplate/notification start:local
+    command: yarn workspace @naval-combat-server/notification start:local
     ports:
       - "3000:3000"
     extra_hosts:

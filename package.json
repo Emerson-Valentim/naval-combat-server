@@ -1,5 +1,5 @@
 {
-  "name": "event-boilerplate",
+  "name": "naval-combat-server",
   "private": true,
   "version": "0.0.1",
   "description": "Boilerplate for building microservice following an architecture pattern",
@@ -7,7 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "docker:build": "./scripts/build.sh",
-    "start:notification": "yarn workspace @event-boilerplate/notification start:server"
+    "start:notification": "yarn workspace @naval-combat-server/notification start:server"
   },
   "workspaces": {
     "packages": [
@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Emerson-Valentim/event-boilerplate.git"
+    "url": "git+https://github.com/Emerson-Valentim/naval-combat-server.git"
   },
   "keywords": [
     "events"
@@ -28,7 +28,7 @@
   "author": "Emerson-Valentim",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Emerson-Valentim/event-boilerplate/issues"
+    "url": "https://github.com/Emerson-Valentim/naval-combat-server/issues"
   },
-  "homepage": "https://github.com/Emerson-Valentim/event-boilerplate#readme"
+  "homepage": "https://github.com/Emerson-Valentim/naval-combat-server#readme"
 }
