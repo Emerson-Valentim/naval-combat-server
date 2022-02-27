@@ -5,7 +5,7 @@
   "description": "Boilerplate for building microservice following an architecture pattern",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "yarn workspace @naval-combat-server/domains test",
     "docker:build": "./scripts/build.sh",
     "start:notification": "yarn workspace @naval-combat-server/notification start:server"
   },
