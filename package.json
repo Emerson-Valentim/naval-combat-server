@@ -7,8 +7,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "docker:build": "./scripts/build.sh",
-    "start:consumer": "yarn workspace @event-boilerplate/consumer start:server",
-    "start:worker": "yarn workspace @event-boilerplate/worker start:server",
     "start:notification": "yarn workspace @event-boilerplate/notification start:server"
   },
   "workspaces": {

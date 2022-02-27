@@ -1,77 +1,6 @@
 version: "3.8"
 
 services:
-# Zookeeper configuration
-  zookeeper:
-    image: confluentinc/cp-zookeeper:5.4.6
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-    networks:
-      - consumer
-
-  # Kafka configuration
-  kafka:
-    image: confluentinc/cp-kafka:5.4.6
-    networks:
-      - consumer
-    ports:
-      - "9092:9092"
-      - "9094:9094"
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
-      KAFKA_LISTENERS: INTERNAL://:9092,OUTSIDE://:9094
-      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,OUTSIDE://host.docker.internal:9094
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT
-    extra_hosts:
-      - "host.docker.internal:172.17.0.1"
-    depends_on:
-      - zookeeper
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "kafka-topics --list --bootstrap-server localhost:9092",
-        ]
-      interval: 20s
-      timeout: 30s
-      retries: 10
-
-  # Kafdrop configuration
-  kafdrop:
-    image: obsidiandynamics/kafdrop:latest
-    networks:
-      - consumer
-    restart: "no"
-    ports:
-      - "9000:9000"
-    environment:
-      KAFKA_BROKERCONNECT: "kafka:9094"
-      JVM_OPTS: "-Xms16M -Xmx48M -Xss180K -XX:-TieredCompilation -XX:+UseStringDeduplication -noverify"
-    depends_on:
-      - "kafka"
-
-  #Consumer configuration
-  consumer:
-    build:
-      context: .
-      dockerfile: ./services/consumer/Dockerfile
-    env_file:
-      - ./services/consumer/.env
-    networks:
-      - consumer
-    volumes:
-      - ./services/consumer/build:/home/ubuntu/services/consumer/build
-      - ./services/consumer/node_modules:/home/ubuntu/services/consumer/node_modules
-    command: yarn workspace @event-boilerplate/consumer start:local
-    depends_on:
-      kafka:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-
   #API configuration
   api:
     build:
@@ -87,9 +16,6 @@ services:
     command: yarn workspace @event-boilerplate/api start:local
     ports:
       - "4000:4000"
-    depends_on:
-      kafka:
-        condition: service_healthy
 
   #Notification configuration
   socket:
@@ -120,37 +46,10 @@ services:
       timeout: 3s
       retries: 30
     networks:
-      - worker
       - socket
-
-  #Worker configuration
-  bull:
-    build:
-      context: .
-      dockerfile: ./services/worker/Dockerfile
-    env_file:
-      - ./services/worker/.env
-    networks:
-      - worker
-    volumes:
-      - ./services/worker/build:/home/ubuntu/services/worker/build
-      - ./services/worker/node_modules:/home/ubuntu/services/worker/node_modules
-    command: yarn workspace @event-boilerplate/worker start:local
-    depends_on:
-      - redis
-
-volumes:
-  zookeeper_data:
-    driver: local
-  kafka_data:
-    driver: local
 
 networks:
   api:
     driver: bridge
-  consumer:
-    driver: bridge
   socket:
-    driver: bridge
-  worker:
     driver: bridge
