@@ -4,8 +4,8 @@ import { curry } from "ramda";
 import SecretManagerDomain from "../secrets";
 
 const decrypt = async (SecretManager: typeof SecretManagerDomain, message: string): Promise<string> => {
-  if(typeof message !== "string") {
-    throw new Error("Message should be a string");
+  if(!message || typeof message !== "string") {
+    throw new Error("Message should be a valid string");
   }
 
   let secret: string;
