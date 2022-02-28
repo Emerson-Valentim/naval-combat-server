@@ -1,6 +1,4 @@
-import jwt from "jsonwebtoken";
-
-import encrypt from "../encrypt";
+import decrypt from "../decrypt";
 import { buildMock as buildSecretMock} from "../../secrets/__tests__/secrets-factory";
 
 const buildMock = (mocks?: any) => ({
@@ -12,7 +10,7 @@ test("should fail because message is empty", async () => {
     SecretManager
   } = buildMock();
 
-  await expect(encrypt(SecretManager, "")).rejects.toThrow("Message should be a valid string");
+  await expect(decrypt(SecretManager, "")).rejects.toThrow("Message should be a valid string");
 });
 
 test("should fail because message is an object", async () => {
@@ -21,7 +19,7 @@ test("should fail because message is an object", async () => {
   } = buildMock();
 
   // @ts-expect-error it should error because input is not a string
-  await expect(encrypt(SecretManager, {})).rejects.toThrow("Message should be a valid string");
+  await expect(decrypt(SecretManager, {})).rejects.toThrow("Message should be a valid string");
 });
 
 test("should fail because SecretManager get failed", async () => {
@@ -33,14 +31,12 @@ test("should fail because SecretManager get failed", async () => {
     }
   });
 
-  await expect(encrypt(SecretManager, "message")).rejects.toThrow("Failed to get secret: connection refused");
+  await expect(decrypt(SecretManager, "message")).rejects.toThrow("Failed to get secret: connection refused");
 });
 
-test("should return an encrypted message", async () => {
+test("should return an decrypted message", async () => {
   const mockSecret = "secret-test";
   const mockMessage = "message";
-
-  const expectedMessage = jwt.sign(mockMessage, mockSecret, { algorithm: "HS256" });
 
   const {
     SecretManager
@@ -50,7 +46,7 @@ test("should return an encrypted message", async () => {
     }
   });
 
-  const response = await encrypt(SecretManager, "message");
+  const response = await decrypt(SecretManager, "eyJhbGciOiJIUzI1NiJ9.bWVzc2FnZQ.Nw2SK29A2tM_NNOE9A9jTgS4hMLa9pkewpGKKLmLxlE");
 
-  expect(response).toEqual(expectedMessage);
+  expect(response).toEqual(mockMessage);
 });
