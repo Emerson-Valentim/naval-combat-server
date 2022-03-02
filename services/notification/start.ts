@@ -1,6 +1,6 @@
-import Server from "./config/server";
-import ExampleSocketHandler from "./handlers/example-socket-handler";
+import Server from "./src/config/server";
+import ExampleSocketHandler from "./src/handlers/example-handler";
 
 Server.start([
-  new ExampleSocketHandler()
+  new ExampleSocketHandler(),
 ]);

@@ -15,7 +15,7 @@ export default class Server {
     cors: { origin: "*", methods: ["GET", "POST"] },
   });
 
-  public static async start(handlers: BaseSocketHandler<unknown>[]) {
+  public static async start(handlers: BaseSocketHandler<unknown, unknown>[]) {
     await Server.adapter();
 
     Server.register(handlers);
@@ -38,7 +38,7 @@ export default class Server {
     Server.socketIO.adapter(createAdapter(pubClient, subClient));
   }
 
-  private static register(handlers: BaseSocketHandler<unknown>[]) {
+  private static register(handlers: BaseSocketHandler<unknown, unknown>[]) {
     Server.socketIO.on("connection", (socket) => {
       handlers.forEach(handler => {
         handler.setup(Server.socketIO, socket);
