@@ -6,8 +6,8 @@
   "main": "index.js",
   "scripts": {
     "test": "yarn workspace @naval-combat-server/domains test",
-    "docker:build": "./scripts/build.sh",
-    "start:notification": "yarn workspace @naval-combat-server/notification start:server"
+    "start:notification": "yarn workspace @naval-combat-server/notification start:server",
+    "test:compile": "yarn workspace @naval-combat-server/ports compile"
   },
   "workspaces": {
     "packages": [
