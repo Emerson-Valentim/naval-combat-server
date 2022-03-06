@@ -44,7 +44,7 @@ const create = async (user: UserInput) => {
 
   const newUser: User = {
     email: user.email.trim(),
-    username: user.email.trim(),
+    username: user.username.trim(),
     password: await Hash.hash(user.password),
     meta: {
       wins: 0,
@@ -53,7 +53,7 @@ const create = async (user: UserInput) => {
     },
   };
 
-  const createdUser = entity.create(newUser);
+  const createdUser = await entity.create(newUser);
 
   return omit(["password"], createdUser);
 };
