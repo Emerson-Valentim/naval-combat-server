@@ -18,6 +18,12 @@ const refresh = async (
     secret
   )) as AuthToken;
 
+  const currentToken = await Database.findBy(decryptedToken.userId);
+
+  if (currentToken.refreshToken !== refreshToken) {
+    throw new Error("Token is not valid");
+  }
+
   await Database.remove(decryptedToken.userId);
 
   return Database.create({

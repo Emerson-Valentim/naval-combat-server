@@ -47,6 +47,11 @@ test("should create a new token on refresh", async () => {
     secretMock: {
       get: jest.fn().mockResolvedValue(secret),
     },
+    accessTokenMock: {
+      findBy: jest.fn().mockResolvedValue({
+        refreshToken
+      })
+    }
   });
 
   await refresh(Database, SecretManager, refreshToken);
@@ -57,4 +62,29 @@ test("should create a new token on refresh", async () => {
     refreshToken: expect.any(String),
     userId: "user-id",
   });
+});
+
+test("should thrown an error because refreshToken is not the one on database", async () => {
+  const refreshToken = buildEncryptedToken(
+    secret,
+    {
+      userId: "user-id",
+    },
+    "7d"
+  );
+
+  const { Database, SecretManager } = buildMock({
+    secretMock: {
+      get: jest.fn().mockResolvedValue(secret),
+    },
+    accessTokenMock: {
+      findBy: jest.fn().mockResolvedValue({
+        refreshToken: "invalid-refresh-token"
+      })
+    }
+  });
+
+  await expect(
+    refresh(Database, SecretManager, refreshToken)
+  ).rejects.toThrowError("Token is not valid");
 });

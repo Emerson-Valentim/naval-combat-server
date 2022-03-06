@@ -3,9 +3,12 @@ import { DateTime } from "luxon";
 import verify from "../verify";
 import { buildMock as buildSecretMock } from "../../secrets/__tests__/secrets-factory";
 
-import { buildEncryptedToken } from "./access-token-factory";
+import { buildEncryptedToken ,
+  buildMock as buildAccessTokenMock,
+} from "./access-token-factory";
 
-const buildMock = ({ secretMock }: any = {}) => ({
+const buildMock = ({ accessTokenMock, secretMock }: any = {}) => ({
+  Database: buildAccessTokenMock(accessTokenMock),
   SecretManager: buildSecretMock(secretMock),
 });
 
@@ -21,13 +24,18 @@ test("should return deserialized token with user information", async () => {
 
   const accessToken = buildEncryptedToken(secret, tokenData);
 
-  const { SecretManager } = buildMock({
+  const { Database, SecretManager } = buildMock({
     secretMock: {
       get: jest.fn().mockResolvedValue(secret),
     },
+    accessTokenMock: {
+      findBy: jest.fn().mockResolvedValue({
+        accessToken: accessToken
+      })
+    }
   });
 
-  const response = await verify(SecretManager, accessToken);
+  const response = await verify(Database, SecretManager, accessToken);
 
   expect(response).toEqual(tokenData);
 });
@@ -40,13 +48,37 @@ test("should thrown an error if accessToken is expired", async () => {
 
   const accessToken = buildEncryptedToken(secret, tokenData);
 
-  const { SecretManager } = buildMock({
+  const { Database, SecretManager } = buildMock({
     secretMock: {
       get: jest.fn().mockResolvedValue(secret),
     },
   });
 
-  await expect(verify(SecretManager, accessToken)).rejects.toThrowError(
+  await expect(verify(Database, SecretManager, accessToken)).rejects.toThrowError(
     "jwt expired"
+  );
+});
+
+test("should thrown an error if accessToken is not the one on database", async () => {
+  const tokenData = {
+    exp: DateTime.now().plus({ hour: 2 }).toMillis() / 1000,
+    userId: "user-id",
+  };
+
+  const accessToken = buildEncryptedToken(secret, tokenData);
+
+  const { Database, SecretManager } = buildMock({
+    secretMock: {
+      get: jest.fn().mockResolvedValue(secret),
+    },
+    accessTokenMock: {
+      findBy: jest.fn().mockResolvedValue({
+        accessToken: "invalid-access-token"
+      })
+    }
+  });
+
+  await expect(verify(Database, SecretManager, accessToken)).rejects.toThrowError(
+    "Token is not valid"
   );
 });
