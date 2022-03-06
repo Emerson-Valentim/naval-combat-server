@@ -1,3 +1,4 @@
+import { omit } from "ramda";
 import { Database } from "@naval-combat-server/ports";
 
 export interface AccessToken {
@@ -31,12 +32,12 @@ const findBy = async (
   return entity.findOne({ userId });
 };
 
-const create = async (input: AccessToken) => {
+const create = async (input: AccessToken): Promise<Omit<AccessToken, "userId">> => {
   const entity = await getEntity();
 
-  const createdAccessToken = await entity.create(input);
+  const createdAccessToken: AccessToken = await entity.create(input);
 
-  return createdAccessToken;
+  return omit(["userId", "id"], createdAccessToken);
 };
 
 const remove = async (userId: string) => {
