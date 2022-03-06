@@ -20,7 +20,7 @@
     "jest"
   ],
   "rules": {
-    "indent": ["error", 2],
+    "@typescript-eslint/indent": ["error", 2],
     "no-console": "error",
     "no-undef": "error",
     "semi": [
