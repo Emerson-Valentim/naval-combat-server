@@ -7,13 +7,18 @@ export const typeDefs = gql`
 
   input CreateUserInput {
     email: String!
-    userName: String!
+    username: String!
+    password: String!
+  }
+
+  input SignInInput {
+    email: String!
     password: String!
   }
 
   type User {
     email: String!
-    userName: String!
+    username: String!
     meta: UserMeta!
   }
 
@@ -23,6 +28,11 @@ export const typeDefs = gql`
     loses: Int!
   }
 
+  type SignIn {
+    accessToken: String!
+    refreshToken: String!
+  }
+
   type Query {
     status: Boolean!
   }
@@ -30,6 +40,7 @@ export const typeDefs = gql`
   type Mutation {
     example(input: ExampleInput!): Boolean
     createUser(input: CreateUserInput!): User!
+    signIn(input: SignInInput!): SignIn!
   }
 
 `;

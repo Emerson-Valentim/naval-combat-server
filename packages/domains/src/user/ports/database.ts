@@ -1,27 +1,28 @@
-import { Database } from "@naval-combat-server/ports";
+import { Database, Hash } from "@naval-combat-server/ports";
+import { omit } from "ramda";
 
 export interface User {
-  email: string
-  userName: string
-  password: string
+  email: string;
+  username: string;
+  password: string;
   meta: {
-    wins: number,
-    matches: number,
-    loses: number
-  }
+    wins: number;
+    matches: number;
+    loses: number;
+  };
 }
 
-export type UserInput = Omit<User, "meta">
+export type UserInput = Omit<User, "meta">;
 
 const UserSchema = {
   email: String,
-  userName: String,
+  username: String,
   password: String,
   meta: {
     wins: Number,
     matches: Number,
-    loses: Number
-  }
+    loses: Number,
+  },
 };
 
 const User = new Database(process.env.MONGODB_ADDRESS!);
@@ -32,28 +33,32 @@ const getEntity = async () => {
   return UserEntity;
 };
 
-const findById = async (id: string) => {
+const findBy = async (field: "email" | "username", value: string) => {
   const entity = await getEntity();
 
-  return entity.findById(id);
+  return entity.findOne({ [field]: value });
 };
 
 const create = async (user: UserInput) => {
   const entity = await getEntity();
 
   const newUser: User = {
-    ...user,
+    email: user.email.trim(),
+    username: user.username.trim(),
+    password: await Hash.hash(user.password),
     meta: {
       wins: 0,
       loses: 0,
-      matches: 0
-    }
+      matches: 0,
+    },
   };
 
-  return entity.create(newUser);
+  const createdUser = await entity.create(newUser);
+
+  return omit(["password"], createdUser);
 };
 
 export default {
-  findById,
-  create
+  findBy,
+  create,
 };

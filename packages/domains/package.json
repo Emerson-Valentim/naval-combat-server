@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@naval-combat-server/ports": "0.0.1",
-    "argon2": "^0.28.4",
+    "joi": "^17.6.0",
     "jsonwebtoken": "^8.5.1",
     "ramda": "^0.27.1"
   }

@@ -14,7 +14,6 @@ services:
       - ./packages:/home/ubuntu/packages
       - ./services/api/build:/home/ubuntu/services/api/build
       - ./services/api/node_modules:/home/ubuntu/services/api/node_modules
-      - ./packages:/home/ubuntu/services/api/node_modules/@naval-combat-server
     command: yarn workspace @naval-combat-server/api start:local
     depends_on:
       - mongo
@@ -34,7 +33,6 @@ services:
       - ./packages:/home/ubuntu/packages
       - ./services/notification/build:/home/ubuntu/services/notification/build
       - ./services/notification/node_modules:/home/ubuntu/services/notification/node_modules
-      - ./packages:/home/ubuntu/services/notification/node_modules/@naval-combat-server
     command: yarn workspace @naval-combat-server/notification start:local
     ports:
       - "3000:3000"
