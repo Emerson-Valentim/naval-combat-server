@@ -11,9 +11,13 @@ services:
     networks:
       - api
     volumes:
+      - ./packages:/home/ubuntu/packages
       - ./services/api/build:/home/ubuntu/services/api/build
       - ./services/api/node_modules:/home/ubuntu/services/api/node_modules
+      - ./packages:/home/ubuntu/services/api/node_modules/@naval-combat-server
     command: yarn workspace @naval-combat-server/api start:local
+    depends_on:
+      - mongo
     ports:
       - "4000:4000"
 
@@ -27,11 +31,15 @@ services:
     networks:
       - socket
     volumes:
+      - ./packages:/home/ubuntu/packages
       - ./services/notification/build:/home/ubuntu/services/notification/build
       - ./services/notification/node_modules:/home/ubuntu/services/notification/node_modules
+      - ./packages:/home/ubuntu/services/notification/node_modules/@naval-combat-server
     command: yarn workspace @naval-combat-server/notification start:local
     ports:
       - "3000:3000"
+    depends_on:
+      - mongo
     extra_hosts:
       - "host.docker.internal:172.17.0.1"
 
@@ -55,6 +63,8 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+      - "8080:27017"
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongo mongo:27017/test --quiet
       interval: 10s
@@ -63,6 +73,8 @@ services:
       start_period: 40s
     networks:
       - mongo
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
 
   mongo-workbench:
     image: mongo-express
