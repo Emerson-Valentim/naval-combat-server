@@ -1,6 +1,6 @@
 export const buildMock = (secretManager?: any) => {
   return {
-    ...jest.requireMock("../"),
+    ...jest.requireMock("../").default,
     ...secretManager
   };
 };

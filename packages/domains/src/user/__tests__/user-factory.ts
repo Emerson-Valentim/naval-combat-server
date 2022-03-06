@@ -7,6 +7,7 @@ export const buildMock = (userFactory?: any) => {
 
   return {
     ...mock,
+    ...jest.requireMock("../").default,
     ...userFactory,
   };
 };
