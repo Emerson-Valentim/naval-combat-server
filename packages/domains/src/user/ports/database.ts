@@ -1,4 +1,5 @@
 import { Database, Hash } from "@naval-combat-server/ports";
+import { omit } from "ramda";
 
 export interface User {
   email: string;
@@ -42,7 +43,8 @@ const create = async (user: UserInput) => {
   const entity = await getEntity();
 
   const newUser: User = {
-    ...user,
+    email: user.email.trim(),
+    username: user.email.trim(),
     password: await Hash.hash(user.password),
     meta: {
       wins: 0,
@@ -51,7 +53,9 @@ const create = async (user: UserInput) => {
     },
   };
 
-  return entity.create(newUser);
+  const createdUser = entity.create(newUser);
+
+  return omit(["password"], createdUser);
 };
 
 export default {
