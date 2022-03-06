@@ -5,17 +5,12 @@ export const typeDefs = gql`
     value: String!
   }
 
-  type Example {
-    value: String!
-  }
-
-
   type Query {
     status: Boolean!
   }
 
   type Mutation {
-    example(input: ExampleInput!): Example!
+    example(input: ExampleInput!): Boolean
   }
 
 `;

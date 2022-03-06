@@ -1,5 +1,6 @@
 import { CLogger } from "evs-tools";
 import LibSocketHandler from "evs-tools/dist/app/connectors/socket/handler";
+import { encryption } from "@naval-combat-server/domains";
 
 export default class SocketHandler extends LibSocketHandler {
   public async emit<T>({
@@ -10,7 +11,7 @@ export default class SocketHandler extends LibSocketHandler {
     message: T;
   }) {
     try {
-      this.socket.emit(channel, this.encodeMessage<T>(message));
+      await this.socket.emit(channel, await this.encodeMessage<T>(message));
     } catch (error: unknown) {
       CLogger.error(
         {
@@ -22,12 +23,12 @@ export default class SocketHandler extends LibSocketHandler {
     }
   }
 
-  private encodeMessage<T>(value: T): Buffer {
+  private async encodeMessage<T>(value: T): Promise<Buffer> {
     if (!value) throw new Error("Message is empty");
 
     const stringifiedValue = JSON.stringify(value);
 
-    const hashedValue = stringifiedValue;
+    const hashedValue = await encryption.encrypt(stringifiedValue);
 
     return Buffer.from(hashedValue);
   }

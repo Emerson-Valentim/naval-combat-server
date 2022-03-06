@@ -1,7 +1,7 @@
 import { ApolloServer as LocalApolloServer } from 'apollo-server';
 import { ApolloServer as LambdaApolloServer } from 'apollo-server-lambda';
 
-import { resolvers } from "./resolvers";
+import { resolvers } from "./resolvers/index";
 import { typeDefs } from "./schema";
 
 export default class Server {
