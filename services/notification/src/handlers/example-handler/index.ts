@@ -7,8 +7,8 @@ interface ExampleSocketEvents {
 }
 
 export default class ExampleSocketHandler extends BaseSocketHandler<
-  ExampleSocketEvents,
-  unknown
+ExampleSocketEvents,
+unknown
 > {
   protected register(): void {
     this.socket.on("server:example", async (message: Buffer) => {

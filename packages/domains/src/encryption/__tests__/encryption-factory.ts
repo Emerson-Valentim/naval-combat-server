@@ -1,6 +1,6 @@
 export const buildMock = (encryptionFactory?: any) => {
   return {
-    ...jest.requireMock("../"),
+    ...jest.requireMock("../").default,
     ...encryptionFactory
   };
 };
