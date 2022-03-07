@@ -1,15 +1,17 @@
 import signIn from "../sign-in";
 
+import { buildMock as buildAccessTokenMock } from "../../access-token/__tests__/access-token-factory";
+
 import { buildMock as buildUserMock, buildUser } from "./user-factory";
 
-const buildMock = ({ userMock, hashMock }: any = {}) => {
-
+const buildMock = ({ userMock, hashMock, accessTokenMock }: any = {}) => {
   return {
     Database: buildUserMock(userMock),
     Hash: {
       verify: hashMock?.verify || jest.fn(),
       hash: hashMock?.hash || jest.fn()
     },
+    AccessToken: buildAccessTokenMock(accessTokenMock)
   };
 };
 
@@ -22,9 +24,9 @@ const buildInput = (data?: any) => ({
 test("should error because user was not found", async () => {
   const input = buildInput();
 
-  const { Database, Hash } = buildMock();
+  const { Database, Hash, AccessToken } = buildMock();
 
-  await expect(signIn(Database, Hash, input)).rejects.toThrowError(
+  await expect(signIn(Database, Hash, AccessToken, input)).rejects.toThrowError(
     "Invalid login"
   );
 });
@@ -32,7 +34,7 @@ test("should error because user was not found", async () => {
 test("should error because password is not right", async () => {
   const input = buildInput();
 
-  const { Database, Hash } = buildMock({
+  const { Database, Hash, AccessToken } = buildMock({
     userMock: {
       findBy: jest.fn().mockResolvedValue(buildUser({
         password: "different-password"
@@ -43,7 +45,7 @@ test("should error because password is not right", async () => {
     }
   });
 
-  await expect(signIn(Database, Hash, input)).rejects.toThrowError(
+  await expect(signIn(Database, Hash, AccessToken, input)).rejects.toThrowError(
     "Invalid login"
   );
 
@@ -56,16 +58,24 @@ test("should error because password is not right", async () => {
 test("should return accessToken and refreshToken", async () => {
   const input = buildInput();
 
-  const { Database, Hash } = buildMock({
+  const { Database, Hash, AccessToken } = buildMock({
     userMock: {
       findBy: jest.fn().mockResolvedValue(buildUser()),
     },
     hashMock: {
       verify: jest.fn().mockResolvedValue(true)
+    },
+    accessTokenMock: {
+      create: jest.fn().mockResolvedValue({
+        accessToken: "accessToken",
+        refreshToken: "refreshToken"
+      })
     }
   });
 
-  const response = await signIn(Database, Hash, input);
+  const response = await signIn(Database, Hash, AccessToken, input);
+
+  expect(AccessToken.create).toBeCalled();
 
   expect(response).toEqual({
     accessToken: "accessToken",
