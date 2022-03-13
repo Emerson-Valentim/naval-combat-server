@@ -26,7 +26,7 @@ const getEntity = async () => {
 
 const findBy = async (
   userId: string,
-) => {
+): Promise<AccessToken | null> => {
   const entity = await getEntity();
 
   return entity.findOne({ userId });
