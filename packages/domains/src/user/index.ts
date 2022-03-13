@@ -10,5 +10,5 @@ import _signOut from "./sign-out";
 export default {
   create: _create(Database),
   signIn: _signIn(Database, Hash, AccessToken),
-  singOut: _signOut(AccessToken)
+  signOut: _signOut(AccessToken)
 };
