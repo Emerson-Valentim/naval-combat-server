@@ -45,6 +45,7 @@ export const typeDefs = gql`
     example(input: ExampleInput!): Boolean
     createUser(input: CreateUserInput!): User!
     signIn(input: SignInInput!): SignIn!
+    signOut: Boolean
     refresh(input: RefreshTokenInput!): SignIn!
   }
 
