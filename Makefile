@@ -4,10 +4,10 @@ redis:
 	docker-compose up -d redis
 
 api:
-	docker-compose up -d api
+	docker-compose up -d --build api
 
 notification:
-	docker-compose up -d socket
+	docker-compose up -d --build socket
 
 mongo:
 	docker-compose up -d mongo mongo-workbench
