@@ -16,6 +16,10 @@ export const typeDefs = gql`
     password: String!
   }
 
+  input RefreshTokenInput {
+    refreshToken: String!
+  }
+
   type User {
     email: String!
     username: String!
@@ -41,6 +45,7 @@ export const typeDefs = gql`
     example(input: ExampleInput!): Boolean
     createUser(input: CreateUserInput!): User!
     signIn(input: SignInInput!): SignIn!
+    refresh(input: RefreshTokenInput!): SignIn!
   }
 
 `;

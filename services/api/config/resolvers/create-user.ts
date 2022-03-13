@@ -1,6 +1,6 @@
-import { user } from "@naval-combat-server/domains";
+import { user as UserDomain } from "@naval-combat-server/domains";
 
-const createUser = async (input: any) => {
+const createUser = async (user: typeof UserDomain, input: any) => {
   const newUser = await user.create(input);
 
   return newUser;

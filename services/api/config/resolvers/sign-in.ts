@@ -1,9 +1,14 @@
-import { user } from "@naval-combat-server/domains";
+import { user as UserDomain } from "@naval-combat-server/domains";
+import { AuthenticationError } from "apollo-server";
 
-const signIn = async (input: any) => {
-  const auth = await user.signIn(input);
+const signIn = async (user: typeof UserDomain, input: any) => {
+  try {
+    const auth = await user.signIn(input);
 
-  return auth;
+    return auth;
+  } catch (error) {
+    throw new AuthenticationError("UNAUTHORIZED");
+  }
 };
 
 export default signIn;
