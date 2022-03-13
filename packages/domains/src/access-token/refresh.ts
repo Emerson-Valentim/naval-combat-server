@@ -20,7 +20,9 @@ const refresh = async (
 
   const currentToken = await Database.findBy(decryptedToken.userId);
 
-  if (currentToken.refreshToken !== refreshToken) {
+  const isTokenValid = currentToken && currentToken?.refreshToken === refreshToken;
+
+  if (!currentToken || !isTokenValid) {
     throw new Error("Token is not valid");
   }
 

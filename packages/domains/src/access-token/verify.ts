@@ -13,14 +13,16 @@ const verify = async (
 ): Promise<AuthToken> => {
   const secret = await SecretManager.get("access-token-private-key");
 
-  const decryptedToken: AuthToken = (await jwt.verify(
+  const decryptedToken: AuthToken = jwt.verify(
     accessToken,
     secret
-  )) as AuthToken;
+  ) as AuthToken;
 
   const currentToken = await Database.findBy(decryptedToken.userId);
 
-  if (currentToken.accessToken !== accessToken) {
+  const isTokenValid = currentToken && currentToken?.accessToken === accessToken;
+
+  if (!currentToken || !isTokenValid) {
     throw new Error("Token is not valid");
   }
 
