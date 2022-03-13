@@ -40,8 +40,10 @@ export default class Server {
       context: async ({ req }: { req: IncomingMessage}): Promise<ServerContext> => {
         const { headers: { authorization: accessToken } } = req;
 
+        const authentication = accessToken ? await authenticator(accessToken) : {};
+
         return {
-          accessTokenData: accessToken ? await authenticator(accessToken) : undefined
+          ...authentication
         };
       }
     };
