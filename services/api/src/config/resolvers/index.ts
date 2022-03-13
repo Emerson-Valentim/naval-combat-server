@@ -3,10 +3,13 @@ import { accessToken as AccessTokenDomain, user as UserDomain } from "@naval-com
 
 import { NavalCombatSocket } from "../../ports/notification";
 
-import createUser from "./create-user";
+import { ServerContext } from "../server";
+
+import createUser from "./user/create-user";
 import example from "./example";
-import refresh from "./refresh";
-import signIn from "./sign-in";
+import refresh from "./accessToken/refresh";
+import signIn from "./user/sign-in";
+import signOut from "./user/sign-out";
 
 export const resolvers = {
   Query: {
@@ -16,6 +19,7 @@ export const resolvers = {
     example: async (_parent: any, _args: any) => example(NavalCombatSocket, _args.input),
     createUser: async (_parent: any, _args: any) => createUser(UserDomain, _args.input),
     signIn: async (_parent: any, _args: any) => signIn(UserDomain, _args.input),
+    signOut: async(_parent: any, _args: any, { accessTokenData }: ServerContext) => signOut(UserDomain, accessTokenData),
     refresh: async (_parent: any, _args: any) => refresh(AccessTokenDomain, _args.input)
   },
 };

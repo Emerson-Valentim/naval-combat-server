@@ -1,8 +1,17 @@
-import { ApolloServer as LocalApolloServer } from 'apollo-server';
+import { IncomingMessage } from 'http';
+
+import { ApolloServer as LocalApolloServer, Config } from 'apollo-server';
 import { ApolloServer as LambdaApolloServer } from 'apollo-server-lambda';
 
-import { resolvers } from "./resolvers/index";
+import { AuthToken } from '@naval-combat-server/domains/build/src/access-token/@types/auth-token';
+
 import { typeDefs } from "./schema";
+import {authenticator} from './tools/index';
+import { resolvers } from "./resolvers/index";
+
+export interface ServerContext {
+  accessTokenData?: AuthToken
+}
 
 export default class Server {
 
@@ -24,11 +33,19 @@ export default class Server {
     return lambdaServer.createHandler();
   }
 
-  protected static generateConfig() {
+  protected static generateConfig(): Config<LocalApolloServer | LambdaApolloServer> {
     return {
       typeDefs: Server.typeDefs,
       resolvers: Server.resolvers,
-      cors: true
+      context: async ({ req }: { req: IncomingMessage}): Promise<ServerContext> => {
+        const { headers: { authorization: accessToken } } = req;
+
+        const authentication = accessToken ? await authenticator(accessToken) : {};
+
+        return {
+          ...authentication
+        };
+      }
     };
   }
 }

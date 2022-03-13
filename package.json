@@ -7,7 +7,8 @@
   "scripts": {
     "test": "yarn workspace @naval-combat-server/domains test",
     "start:notification": "yarn workspace @naval-combat-server/notification start:server",
-    "test:compile": "yarn workspace @naval-combat-server/ports compile"
+    "test:compile": "yarn workspace @naval-combat-server/ports compile",
+    "delete:node_modules": "find . -name 'node_modules' -type d -prune -exec rm -rf '{}' +"
   },
   "workspaces": {
     "packages": [
