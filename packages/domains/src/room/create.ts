@@ -42,7 +42,6 @@ const create = async (
     channel: "server:create:room",
     message: {
       id: createdRoom.id,
-      userSocketId: "user"
     },
   });
 

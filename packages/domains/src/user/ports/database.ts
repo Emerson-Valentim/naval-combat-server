@@ -10,6 +10,7 @@ export interface User {
     matches: number;
     loses: number;
   };
+  socketId?: string;
 }
 
 export type UserInput = Omit<User, "meta">;
@@ -23,6 +24,7 @@ const UserSchema = {
     matches: Number,
     loses: Number,
   },
+  socketId: String
 };
 
 const User = new Database(process.env.MONGODB_ADDRESS!);
@@ -58,7 +60,23 @@ const create = async (user: UserInput) => {
   return omit(["password"], createdUser);
 };
 
+const update = async ({
+  id,
+  ...input
+}: (Pick<User, "socketId">) & {
+  id: string;
+}): Promise<User> => {
+  const entity = await getEntity();
+
+  await entity.findByIdAndUpdate(id, input);
+
+  const room = await entity.findById(id);
+
+  return room;
+};
+
 export default {
   findBy,
   create,
+  update
 };
