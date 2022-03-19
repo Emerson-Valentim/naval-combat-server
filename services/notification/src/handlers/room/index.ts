@@ -5,7 +5,7 @@ import BaseSocketHandler from "../@types/base-socket-handler";
 
 interface RoomSocketEvents {
   "server:create:room": (message: any) => void;
-  [roomId: string]: (message: any) => void;
+  [clientRoomReadyId: string]: (message: any) => void;
 }
 
 export default class RoomHandler extends BaseSocketHandler<
@@ -30,13 +30,27 @@ RoomSocketEvents,
           id,
         });
 
-        this.socket.emit(`client:room:ready:${id}`, null);
+        this.socket.emit(`client:room:ready:${id}`, {
+          date: new Date().getTime(),
+        });
       } catch (error: any) {
         CLogger.error({
           handler: "rooms",
           error: error.message,
         });
       }
+    });
+
+    this.socket.on(`client:room:acknowledge`, async (message: any) => {
+      const payload = await this.handleOrigin<{ roomId: string }>(
+        "client",
+        message,
+        this.socket
+      );
+
+      if (!payload) return;
+
+      this.socket.join(payload.roomId);
     });
   }
 }
