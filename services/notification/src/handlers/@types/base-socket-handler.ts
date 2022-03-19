@@ -33,7 +33,7 @@ export default abstract class BaseSocketHandler<
     return Buffer.from(message).toString();
   }
 
-  protected async handleOrigin(command: string, message: Buffer) {
+  protected async handleOrigin<T>(command: string, message: Buffer): Promise<T | void> {
     const stringifiedMessage = this.fromBufferToString(message);
 
     const originCommand = this.originDictionary[command];
