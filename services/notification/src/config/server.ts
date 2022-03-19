@@ -40,9 +40,21 @@ export default class Server {
 
   private static register(handlers: BaseSocketHandler<unknown, unknown>[]) {
     Server.socketIO.on("connection", (socket) => {
-      handlers.forEach(handler => {
-        handler.setup(Server.socketIO, socket);
+      CLogger.info({
+        id: socket.id,
+        message: "Connected",
       });
+
+      socket.on("disconnect", function () {
+        CLogger.info({
+          id: socket.id,
+          message: "Disconnected",
+        });
+      });
+
+      for (const handler of handlers) {
+        handler.setup(Server.socketIO, socket);
+      }
     });
   }
 }
