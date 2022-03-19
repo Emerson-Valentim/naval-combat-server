@@ -20,6 +20,12 @@ export const typeDefs = gql`
     refreshToken: String!
   }
 
+  input CreateRoomInput {
+    title: String!
+    type: RoomType!
+    limit: Int!
+  }
+
   type User {
     email: String!
     username: String!
@@ -37,8 +43,28 @@ export const typeDefs = gql`
     refreshToken: String!
   }
 
+  type Room {
+    id: String!
+    owner: String
+    title: String
+    type: RoomType
+    players: [String]
+    limit: Int!
+    status: RoomStatus
+  }
+
   type Query {
     status: Boolean!
+  }
+
+  enum RoomType {
+    PRIVATE
+    PUBLIC
+  }
+
+  enum RoomStatus {
+    CREATING
+    CREATED
   }
 
   type Mutation {
@@ -47,6 +73,7 @@ export const typeDefs = gql`
     signIn(input: SignInInput!): SignIn!
     signOut: Boolean
     refresh(input: RefreshTokenInput!): SignIn!
+    createRoom(input: CreateRoomInput!): Room!
   }
 
 `;
