@@ -29,6 +29,7 @@ services:
       - ./services/notification/.env
     networks:
       - socket
+      - mongo
     volumes:
       - ./packages:/home/ubuntu/packages
       - ./services/notification/build:/home/ubuntu/services/notification/build
