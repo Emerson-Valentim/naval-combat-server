@@ -2,6 +2,7 @@ import { Database, Hash } from "@naval-combat-server/ports";
 import { omit } from "ramda";
 
 export interface User {
+  id: string;
   email: string;
   username: string;
   password: string;
@@ -16,6 +17,7 @@ export interface User {
 export type UserInput = Omit<User, "meta">;
 
 const UserSchema = {
+  id: String,
   email: String,
   username: String,
   password: String,
@@ -35,16 +37,22 @@ const getEntity = async () => {
   return UserEntity;
 };
 
-const findBy = async (field: "email" | "username", value: string) => {
+const findBy = async (field: "email" | "username", value: string): Promise<User | null> => {
   const entity = await getEntity();
 
   return entity.findOne({ [field]: value });
 };
 
+const findById = async (userId: string): Promise<User | null> => {
+  const entity = await getEntity();
+
+  return entity.findById(userId);
+};
+
 const create = async (user: UserInput) => {
   const entity = await getEntity();
 
-  const newUser: User = {
+  const newUser: Omit<User, "id"> = {
     email: user.email.trim(),
     username: user.username.trim(),
     password: await Hash.hash(user.password),
@@ -78,5 +86,6 @@ const update = async ({
 export default {
   findBy,
   create,
-  update
+  update,
+  findById
 };
