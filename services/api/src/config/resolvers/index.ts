@@ -10,11 +10,13 @@ import example from "./example";
 import refresh from "./accessToken/refresh";
 import signIn from "./user/sign-in";
 import signOut from "./user/sign-out";
-import createRoom from "./room/createRoom";
+import createRoom from "./room/create-room";
+import getRooms from "./room/get-rooms";
 
 export const resolvers = {
   Query: {
     status: () => true,
+    getRooms: async (_parent: any, _args: any) => getRooms(RoomDomain)
   },
   Mutation: {
     example: async (_parent: any, _args: any) => example(NavalCombatSocket, _args.input),
@@ -22,6 +24,6 @@ export const resolvers = {
     signIn: async (_parent: any, _args: any) => signIn(UserDomain, _args.input),
     signOut: async(_parent: any, _args: any, { accessTokenData }: ServerContext) => signOut(UserDomain, accessTokenData),
     refresh: async (_parent: any, _args: any) => refresh(AccessTokenDomain, _args.input),
-    createRoom: async (_parent: any, _args: any, { accessTokenData}: ServerContext) => createRoom(NavalCombatSocket, RoomDomain, accessTokenData, _args.input)
+    createRoom: async (_parent: any, _args: any, { accessTokenData}: ServerContext) => createRoom(NavalCombatSocket, RoomDomain, accessTokenData, _args.input),
   },
 };

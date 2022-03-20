@@ -53,10 +53,6 @@ export const typeDefs = gql`
     status: RoomStatus
   }
 
-  type Query {
-    status: Boolean!
-  }
-
   enum RoomType {
     PRIVATE
     PUBLIC
@@ -74,6 +70,11 @@ export const typeDefs = gql`
     signOut: Boolean
     refresh(input: RefreshTokenInput!): SignIn!
     createRoom(input: CreateRoomInput!): Room!
+  }
+
+  type Query {
+    status: Boolean!
+    getRooms: [Room]
   }
 
 `;
