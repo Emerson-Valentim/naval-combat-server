@@ -40,6 +40,7 @@ export default class Server {
 
   private static register(handlers: BaseSocketHandler<unknown, unknown>[]) {
     Server.socketIO.on("connection", (socket) => {
+
       CLogger.info({
         id: socket.id,
         message: "Connected",
