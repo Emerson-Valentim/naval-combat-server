@@ -33,14 +33,13 @@ export default abstract class BaseSocketHandler<
     return Buffer.from(message).toString();
   }
 
-  protected async handleOrigin<T>(command: string, message: Buffer, socket?: Socket
-  ): Promise<T | void> {
+  protected async handleOrigin<T>(command: string, message: Buffer): Promise<T | void> {
     const stringifiedMessage = this.fromBufferToString(message);
 
     const originCommand = this.originDictionary[command];
 
     try {
-      const originResponse = await originCommand.execute(stringifiedMessage, socket);
+      const originResponse = await originCommand.execute(stringifiedMessage, this.socket);
 
       return originResponse;
     } catch (error) {
@@ -48,6 +47,8 @@ export default abstract class BaseSocketHandler<
         message: (error as Error).message,
         execution: "origin",
       });
+
+      this.socket?.disconnect();
 
       return;
     }
