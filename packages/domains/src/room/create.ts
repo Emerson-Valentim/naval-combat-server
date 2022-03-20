@@ -21,7 +21,7 @@ const create = async (
     },
   });
 
-  if (currentRooms.length) {
+  if (currentRooms?.length) {
     for (const currentRoom of currentRooms) {
       await Database.update({
         id: currentRoom.id,
@@ -41,7 +41,7 @@ const create = async (
   await Socket.emit({
     channel: "server:create:room",
     message: {
-      id: createdRoom.id,
+      id: createdRoom?.id,
       userId
     },
   });

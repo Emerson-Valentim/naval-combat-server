@@ -3,9 +3,9 @@ import { RoomStatus, RoomType } from "../ports/database";
 
 import { buildMock as buildRoomMock } from "./room-factory";
 
-const buildMock = ({ userMock }: any = {}) => {
+const buildMock = ({ database }: any = {}) => {
   return {
-    Database: buildRoomMock(userMock),
+    Database: buildRoomMock(database),
   };
 };
 
