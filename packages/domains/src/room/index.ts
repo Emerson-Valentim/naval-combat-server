@@ -1,8 +1,10 @@
 import Database from "./ports/database";
+import _list from "./list";
 import _create from "./create";
 import _registerSocket from "./register-socket";
 
 export default {
   create: _create(Database),
-  registerSocket: _registerSocket(Database)
+  registerSocket: _registerSocket(Database),
+  list: _list(Database),
 };

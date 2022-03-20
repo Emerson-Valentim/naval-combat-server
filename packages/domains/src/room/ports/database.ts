@@ -68,7 +68,7 @@ const update = async ({
 
 const findBy = async (filter: {
   [key: string]: any
-}) => {
+}): Promise<Room[]> => {
   const entity = await getEntity();
 
   return entity.find(filter);
