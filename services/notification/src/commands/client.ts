@@ -6,13 +6,15 @@ import { CLogger } from "../ports/logger";
 import { Command } from "./command";
 
 export default class Client implements Command {
-  public async execute(message: string, socket: Socket) {
+  public async execute(message: string, socket: Socket): Promise<any | void> {
     try {
       if (!socket.handshake.auth) {
-        return "";
+        return;
       }
 
-      await authenticator(socket.handshake.auth.token, socket.id);
+      const accessTokenData = await authenticator(socket.handshake.auth.token, socket.id);
+
+      socket.data.userId = accessTokenData.userId;
 
       return JSON.parse(message);
     } catch (error: unknown) {
