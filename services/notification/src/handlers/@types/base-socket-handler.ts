@@ -33,25 +33,29 @@ export default abstract class BaseSocketHandler<
     return Buffer.from(message).toString();
   }
 
-  protected async handleOrigin<T>(command: string, message: Buffer): Promise<T | void> {
+  protected async handleOrigin<T>(
+    channel: string,
+    message: Buffer
+  ): Promise<T> {
+    CLogger.info({
+      channel,
+      date: new Date().getTime(),
+    });
+
     const stringifiedMessage = this.fromBufferToString(message);
 
-    const originCommand = this.originDictionary[command];
+    const originCommand = this.originDictionary[channel.split(":")[0]];
 
-    try {
-      const originResponse = await originCommand.execute(stringifiedMessage, this.socket);
+    const originResponse = await originCommand.execute(
+      stringifiedMessage,
+      this.socket
+    );
 
-      return originResponse;
-    } catch (error) {
-      CLogger.error({
-        message: (error as Error).message,
-        execution: "origin",
-      });
-
-      this.socket?.disconnect();
-
-      return;
+    if (!originResponse) {
+      throw new Error("Empty message");
     }
+
+    return originResponse;
   }
 
   protected abstract register(): void;
