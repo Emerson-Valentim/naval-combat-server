@@ -26,7 +26,12 @@ export const typeDefs = gql`
     limit: Int!
   }
 
+  input JoinRoomInput {
+    roomId: String!
+  }
+
   type User {
+    id: String
     email: String!
     username: String!
     meta: UserMeta!
@@ -70,11 +75,13 @@ export const typeDefs = gql`
     signOut: Boolean
     refresh(input: RefreshTokenInput!): SignIn!
     createRoom(input: CreateRoomInput!): Room!
+    joinRoom(input: JoinRoomInput!): Boolean
   }
 
   type Query {
     status: Boolean!
     getRooms: [Room]
+    profile: User!
   }
 
 `;
