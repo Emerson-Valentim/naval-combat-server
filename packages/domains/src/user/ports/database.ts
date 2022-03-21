@@ -17,7 +17,6 @@ export interface User {
 export type UserInput = Omit<User, "meta">;
 
 const UserSchema = {
-  id: String,
   email: String,
   username: String,
   password: String,
