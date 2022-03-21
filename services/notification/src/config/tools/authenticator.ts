@@ -18,6 +18,8 @@ const authenticator = async (
     id: accessTokenData.userId,
     socketId,
   });
+
+  return accessTokenData;
 };
 
 export default curry(authenticator);
