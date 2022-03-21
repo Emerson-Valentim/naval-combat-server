@@ -54,7 +54,7 @@ const create = async (
 const update = async ({
   id,
   ...input
-}: (Pick<Room, "status"> | Pick<Room, "players">) & {
+}: (Pick<Room, "status"> | Pick<Room, "players"> | Pick<Room, "owner">) & {
   id: string;
 }): Promise<Room> => {
   const entity = await getEntity();
