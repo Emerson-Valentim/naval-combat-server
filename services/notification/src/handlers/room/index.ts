@@ -20,10 +20,9 @@ interface RoomSocketEvents {
 
 const getUser = async (
   userDomain: typeof UserDomain,
-  id: string,
-  field: "id" | "socket"
+  id: string
 ) => {
-  const user = await userDomain.get(id, field);
+  const user = await userDomain.get(id, "id");
 
   if (!user) {
     throw new Error("User not found");
@@ -53,7 +52,7 @@ const register = (
 
     const { id, userId } = payload;
 
-    const user = await getUser(dependencies.userDomain, userId, "id");
+    const user = await getUser(dependencies.userDomain, userId);
 
     if (user?.socketId) {
       IOHandler.io.to(user.socketId).emit("client:room:ready", {
@@ -90,7 +89,7 @@ const register = (
       userId: string;
     }>("server:join:room", message, socket);
 
-    const user = await getUser(dependencies.userDomain, payload.userId, "id");
+    const user = await getUser(dependencies.userDomain, payload.userId);
 
     if (user?.socketId) {
       IOHandler.io.to(user.socketId).emit("client:room:join", {
@@ -106,7 +105,7 @@ const register = (
 
     socket.join(payload.roomId);
 
-    const user = await getUser(dependencies.userDomain, socket.id, "socket");
+    const user = await getUser(dependencies.userDomain, socket.data.userId);
 
     IOHandler.io.in(payload.roomId).emit("client:room:connection", {
       username: user?.username,
@@ -118,9 +117,7 @@ const register = (
       roomId: string;
     }>("client:room:disconnect", message, socket);
 
-    const user = await getUser(dependencies.userDomain, socket.id, "socket");
-
-    console.log(socket.id, user.id);
+    const user = await getUser(dependencies.userDomain, socket.data.userId);
 
     await dependencies.roomDomain.leave({
       roomId: payload.roomId,
