@@ -36,7 +36,7 @@ const getEntity = async () => {
   return UserEntity;
 };
 
-const findBy = async (field: "email" | "username", value: string): Promise<User | null> => {
+const findBy = async (field: "email" | "username" | "socketId", value: string): Promise<User | null> => {
   const entity = await getEntity();
 
   return entity.findOne({ [field]: value });

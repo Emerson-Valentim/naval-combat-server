@@ -4,9 +4,14 @@ import DatabasePort, { User } from "./ports/database";
 
 const get = async (
   Database: typeof DatabasePort,
-  userId: string
+  id: string,
+  field: "socket" | "id"
 ): Promise<Omit<User, "password">> => {
-  const user = await Database.findById(userId);
+
+  const user =
+    field === "id"
+      ? await Database.findById(id)
+      : await Database.findBy("socketId", id);
 
   if (!user) {
     throw new Error("User not found");

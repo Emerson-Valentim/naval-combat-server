@@ -9,7 +9,7 @@ const profile = async (user: typeof UserDomain, input: Input) => {
   if (!input.userId) {
     throw new AuthenticationError("UNAUTHORIZED");
   }
-  const profile = await user.get(input.userId);
+  const profile = await user.get(input.userId, "id");
 
   return profile;
 };

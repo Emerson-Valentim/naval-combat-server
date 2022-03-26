@@ -38,7 +38,7 @@ test("should return an user without password", async() => {
     }
   });
 
-  const response = await get(Database, "user-id");
+  const response = await get(Database, "user-id", "id");
 
   expect(response.email).toBeDefined();
   // @ts-expect-error we should verify if this field is undefined
