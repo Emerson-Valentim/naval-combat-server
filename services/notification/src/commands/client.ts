@@ -12,9 +12,7 @@ export default class Client implements Command {
         return;
       }
 
-      const accessTokenData = await authenticator(socket.handshake.auth.token, socket.id);
-
-      socket.data.userId = accessTokenData.userId;
+      await authenticator(socket.handshake.auth.token, socket.id);
 
       return JSON.parse(message);
     } catch (error: unknown) {

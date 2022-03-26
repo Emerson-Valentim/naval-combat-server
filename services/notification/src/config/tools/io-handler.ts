@@ -3,42 +3,34 @@ import { Server, Socket } from "socket.io";
 import { originDictionary } from "../../commands/dictionary";
 import { CLogger } from "../../ports/logger";
 
-export default abstract class BaseSocketHandler<
-  EventMapping,
-  DependenciesMapping
-> {
-  private originDictionary = originDictionary;
+export default abstract class IOHandler {
+  private static originDictionary = originDictionary;
 
-  protected io!: Server;
-  protected socket!: Socket<EventMapping, EventMapping, EventMapping>;
-  protected dependencies?: DependenciesMapping;
+  public static io: Server;
 
-  constructor(dependencies?: DependenciesMapping) {
-    this.dependencies = dependencies;
-  }
-
-  public setup(
+  public static setup(
     io: any,
-    socket: Socket<EventMapping, EventMapping, EventMapping>
-  ) {
-    this.io = io;
-    this.socket = socket;
 
-    this.register();
+  ) {
+    if(!this.io) {
+      this.io = io;
+    }
   }
 
-  protected fromBufferToString(message: Buffer) {
+  protected static fromBufferToString(message: Buffer) {
     if (!message) return "";
 
     return Buffer.from(message).toString();
   }
 
-  protected async handleOrigin<T>(
+  public static async handleOrigin<T>(
     channel: string,
-    message: Buffer
+    message: Buffer,
+    socket: Socket
   ): Promise<T> {
     CLogger.info({
       channel,
+      id: socket.id,
       date: new Date().getTime(),
     });
 
@@ -48,7 +40,7 @@ export default abstract class BaseSocketHandler<
 
     const originResponse = await originCommand.execute(
       stringifiedMessage,
-      this.socket
+      socket
     );
 
     if (!originResponse) {
@@ -58,5 +50,4 @@ export default abstract class BaseSocketHandler<
     return originResponse;
   }
 
-  protected abstract register(): void;
 }
