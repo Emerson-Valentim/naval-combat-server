@@ -4,16 +4,12 @@ import { originDictionary } from "../../commands/dictionary";
 import { CLogger } from "../../ports/logger";
 
 export default abstract class IOHandler {
+  private static io: Server;
   private static originDictionary = originDictionary;
 
-  public static io: Server;
-
-  public static setup(
-    io: any,
-
-  ) {
-    if(!this.io) {
-      this.io = io;
+  public static setup(io: any) {
+    if (!this.io) {
+      IOHandler.io = io;
     }
   }
 
@@ -50,4 +46,21 @@ export default abstract class IOHandler {
     return originResponse;
   }
 
+  public static toAll({ channel, message }: { channel: string; message: any }) {
+    IOHandler.io.emit(channel, message);
+  }
+
+  public static toRoom(
+    roomId: string,
+    { channel, message }: { channel: string; message: any }
+  ) {
+    IOHandler.io.in(roomId).emit(channel, message);
+  }
+
+  public static toUser(
+    socketId: string,
+    { channel, message }: { channel: string; message: any }
+  ) {
+    IOHandler.io.to(socketId).emit(channel, message);
+  }
 }

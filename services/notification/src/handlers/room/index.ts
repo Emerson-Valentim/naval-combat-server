@@ -1,4 +1,3 @@
-import { CLogger } from "evs-tools";
 import {
   room as RoomDomain,
   user as UserDomain,
@@ -16,12 +15,11 @@ interface RoomSocketEvents {
   "client:room:join:acknowledge": (message: any) => void;
   "client:room:disconnect": (message: any) => void;
   "client:room:join": (message: any) => void;
+  "client:room:update": (message: any) => void;
+  "client:room:message": (message: any) => void;
 }
 
-const getUser = async (
-  userDomain: typeof UserDomain,
-  id: string
-) => {
+const getUser = async (userDomain: typeof UserDomain, id: string) => {
   const user = await userDomain.get(id, "id");
 
   if (!user) {
@@ -32,8 +30,11 @@ const getUser = async (
 };
 
 const refreshRooms = () => {
-  IOHandler.io.emit("client:room:refresh", {
-    date: new Date().getTime(),
+  IOHandler.toAll({
+    channel: "client:room:refresh",
+    message: {
+      date: new Date().getTime(),
+    },
   });
 };
 
@@ -55,24 +56,20 @@ const register = (
     const user = await getUser(dependencies.userDomain, userId);
 
     if (user?.socketId) {
-      IOHandler.io.to(user.socketId).emit("client:room:ready", {
-        date: new Date().getTime(),
-        roomId: id,
+      IOHandler.toUser(user.socketId, {
+        channel: "client:room:ready",
+        message: {
+          date: new Date().getTime(),
+          roomId: id,
+        },
       });
     }
 
-    try {
-      await dependencies.roomDomain.registerSocket({
-        id,
-      });
+    await dependencies.roomDomain.registerSocket({
+      id,
+    });
 
-      refreshRooms();
-    } catch (error: any) {
-      CLogger.error({
-        handler: "rooms",
-        error: error.message,
-      });
-    }
+    refreshRooms();
   });
 
   socket.on("client:room:acknowledge", async (message: any) => {
@@ -91,9 +88,14 @@ const register = (
 
     const user = await getUser(dependencies.userDomain, payload.userId);
 
+    refreshRooms();
+
     if (user?.socketId) {
-      IOHandler.io.to(user.socketId).emit("client:room:join", {
-        roomId: payload.id,
+      IOHandler.toUser(user.socketId, {
+        channel: "client:room:join",
+        message: {
+          roomId: payload.id,
+        },
       });
     }
   });
@@ -107,9 +109,15 @@ const register = (
 
     const user = await getUser(dependencies.userDomain, socket.data.userId);
 
-    IOHandler.io.in(payload.roomId).emit("client:room:connection", {
-      username: user?.username,
+    IOHandler.toRoom(payload.roomId, {
+      channel: "client:room:update",
+      message: {
+        action: "join",
+        username: user.username,
+      },
     });
+
+    refreshRooms();
   });
 
   socket.on("client:room:disconnect", async (message: any) => {
@@ -124,13 +132,33 @@ const register = (
       userId: user.id,
     });
 
-    IOHandler.io.in(payload.roomId).emit("client:room:disconnect", {
-      username: user?.username,
+    IOHandler.toRoom(payload.roomId, {
+      channel: "client:room:update",
+      message: {
+        action: "leave",
+        username: user.username,
+      },
     });
 
-    socket.leave(payload.roomId);
-
     refreshRooms();
+  });
+
+  socket.on("client:room:message", async (message: any) => {
+    const payload = await IOHandler.handleOrigin<{
+      roomId: string;
+      message: string;
+    }>("client:room:message", message, socket);
+
+    const user = await getUser(dependencies.userDomain, socket.data.userId);
+
+    IOHandler.toRoom(payload.roomId, {
+      channel: "client:room:update",
+      message: {
+        action: "message",
+        username: user.username,
+        message: payload.message,
+      },
+    });
   });
 };
 
