@@ -8,8 +8,6 @@ export default class Server implements Command {
 
   public async execute<T>(message: string): Promise<T | undefined> {
     try {
-      CLogger.info("Server command");
-
       const decryptedMessage = await encryption.decrypt(message);
 
       return JSON.parse(decryptedMessage) as T;

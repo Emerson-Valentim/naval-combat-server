@@ -1,3 +1,3 @@
 export abstract class Command {
-  public abstract execute(...args: any): void;
+  public abstract execute(...args: any): any;
 }

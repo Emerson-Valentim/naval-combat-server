@@ -20,7 +20,22 @@ export const typeDefs = gql`
     refreshToken: String!
   }
 
+  input CreateRoomInput {
+    title: String!
+    type: RoomType!
+    limit: Int!
+  }
+
+  input JoinRoomInput {
+    roomId: String!
+  }
+
+  input GetRoomInput {
+    roomId: String!
+  }
+
   type User {
+    id: String
     email: String!
     username: String!
     meta: UserMeta!
@@ -37,8 +52,24 @@ export const typeDefs = gql`
     refreshToken: String!
   }
 
-  type Query {
-    status: Boolean!
+  type Room {
+    id: String!
+    owner: String
+    title: String
+    type: RoomType
+    players: [String]
+    limit: Int!
+    status: RoomStatus
+  }
+
+  enum RoomType {
+    PRIVATE
+    PUBLIC
+  }
+
+  enum RoomStatus {
+    CREATING
+    CREATED
   }
 
   type Mutation {
@@ -47,6 +78,15 @@ export const typeDefs = gql`
     signIn(input: SignInInput!): SignIn!
     signOut: Boolean
     refresh(input: RefreshTokenInput!): SignIn!
+    createRoom(input: CreateRoomInput!): Room!
+    joinRoom(input: JoinRoomInput!): Boolean
+  }
+
+  type Query {
+    status: Boolean!
+    getRooms: [Room]
+    profile: User!
+    getRoom(input: GetRoomInput!): Room!
   }
 
 `;

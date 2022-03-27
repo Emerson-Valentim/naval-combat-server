@@ -5,18 +5,28 @@ import { createAdapter } from "@socket.io/redis-adapter";
 import { createClient } from "redis";
 
 import { CLogger } from "../ports/logger";
-import BaseSocketHandler from "../handlers/@types/base-socket-handler";
 
+import { IOHandler } from "./tools";
+
+interface SocketHandler {
+  handler: {
+    register: (...params: any) => void;
+  };
+  dependencies?: any;
+}
 export default class Server {
   protected static httpClient = createServer((_, res) => {
     res.end("Server health");
   });
+
   protected static socketIO = new SocketServer(Server.httpClient, {
     cors: { origin: "*", methods: ["GET", "POST"] },
   });
 
-  public static async start(handlers: BaseSocketHandler<unknown, unknown>[]) {
+  public static async start(handlers: SocketHandler[]) {
     await Server.adapter();
+
+    IOHandler.setup(Server.socketIO);
 
     Server.register(handlers);
 
@@ -38,11 +48,25 @@ export default class Server {
     Server.socketIO.adapter(createAdapter(pubClient, subClient));
   }
 
-  private static register(handlers: BaseSocketHandler<unknown, unknown>[]) {
+  private static register(handlers: SocketHandler[]) {
     Server.socketIO.on("connection", (socket) => {
-      handlers.forEach(handler => {
-        handler.setup(Server.socketIO, socket);
+      CLogger.info({
+        id: socket.id,
+        message: "Connected",
       });
+
+      socket.emit("client:request:signIn");
+
+      socket.on("disconnect", function () {
+        CLogger.info({
+          id: socket.id,
+          message: "Disconnected",
+        });
+      });
+
+      for (const unit of handlers) {
+        unit.handler.register(socket, unit.dependencies);
+      }
     });
   }
 }

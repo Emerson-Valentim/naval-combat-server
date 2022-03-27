@@ -2,6 +2,7 @@ import { Database, Hash } from "@naval-combat-server/ports";
 import { omit } from "ramda";
 
 export interface User {
+  id: string;
   email: string;
   username: string;
   password: string;
@@ -10,6 +11,7 @@ export interface User {
     matches: number;
     loses: number;
   };
+  socketId?: string;
 }
 
 export type UserInput = Omit<User, "meta">;
@@ -23,6 +25,7 @@ const UserSchema = {
     matches: Number,
     loses: Number,
   },
+  socketId: String
 };
 
 const User = new Database(process.env.MONGODB_ADDRESS!);
@@ -33,16 +36,22 @@ const getEntity = async () => {
   return UserEntity;
 };
 
-const findBy = async (field: "email" | "username", value: string) => {
+const findBy = async (field: "email" | "username" | "socketId", value: string): Promise<User | null> => {
   const entity = await getEntity();
 
   return entity.findOne({ [field]: value });
 };
 
+const findById = async (userId: string): Promise<User | null> => {
+  const entity = await getEntity();
+
+  return entity.findById(userId);
+};
+
 const create = async (user: UserInput) => {
   const entity = await getEntity();
 
-  const newUser: User = {
+  const newUser: Omit<User, "id"> = {
     email: user.email.trim(),
     username: user.username.trim(),
     password: await Hash.hash(user.password),
@@ -58,7 +67,24 @@ const create = async (user: UserInput) => {
   return omit(["password"], createdUser);
 };
 
+const update = async ({
+  id,
+  ...input
+}: (Pick<User, "socketId">) & {
+  id: string;
+}): Promise<User> => {
+  const entity = await getEntity();
+
+  await entity.findByIdAndUpdate(id, input);
+
+  const room = await entity.findById(id);
+
+  return room;
+};
+
 export default {
   findBy,
   create,
+  update,
+  findById
 };
