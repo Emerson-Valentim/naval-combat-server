@@ -16,7 +16,7 @@ test("should call database to find an user", async() => {
     }
   });
 
-  await get(Database, "user-id");
+  await get(Database, "user-id", "id");
 
   expect(Database.findById).toHaveBeenCalledWith("user-id");
 });
@@ -25,7 +25,7 @@ test("should throw an error because user is not found", async() => {
 
   const { Database } = buildMock();
 
-  await expect(get(Database, "user-id")).rejects.toThrowError("User not found");
+  await expect(get(Database, "user-id", "id")).rejects.toThrowError("User not found");
 });
 
 test("should return an user without password", async() => {
