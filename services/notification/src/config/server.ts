@@ -55,6 +55,8 @@ export default class Server {
         message: "Connected",
       });
 
+      socket.emit("client:request:signIn");
+
       socket.on("disconnect", function () {
         CLogger.info({
           id: socket.id,
