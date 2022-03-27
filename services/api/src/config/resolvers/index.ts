@@ -16,6 +16,7 @@ import signOut from "./user/sign-out";
 import createRoom from "./room/create-room";
 import getRooms from "./room/get-rooms";
 import joinRoom from "./room/join-room";
+import _getRoom from "./room/get-room";
 import refresh from "./accessToken/refresh";
 import example from "./example";
 
@@ -31,6 +32,8 @@ export const resolvers = {
       profile(UserDomain, {
         userId: accessTokenData?.userId,
       }),
+    getRoom: (_parent: any, _args: any, { accessTokenData }: ServerContext) =>
+      _getRoom(RoomDomain, _args.input, accessTokenData),
   },
   Mutation: {
     example: async (_parent: any, _args: any) =>

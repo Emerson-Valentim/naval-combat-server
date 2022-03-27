@@ -30,6 +30,10 @@ export const typeDefs = gql`
     roomId: String!
   }
 
+  input GetRoomInput {
+    roomId: String!
+  }
+
   type User {
     id: String
     email: String!
@@ -82,6 +86,7 @@ export const typeDefs = gql`
     status: Boolean!
     getRooms: [Room]
     profile: User!
+    getRoom(input: GetRoomInput!): Room!
   }
 
 `;
