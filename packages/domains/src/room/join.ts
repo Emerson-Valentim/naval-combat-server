@@ -12,23 +12,23 @@ const join = async (
   Socket: { emit: (input: { channel: string; message: any }) => void },
   input: Input
 ) => {
-  const rooms = await Database.findBy({ id: input.roomId });
+  const room = await Database.findById(input.roomId);
 
-  if (!rooms.length) {
+  if (!room) {
     throw new Error("Room not found");
   }
 
-  const room = rooms[0];
+  if(room.players.includes(input.userId)) {
+    return;
+  }
 
   if (room?.players?.length >= room.limit) {
     throw new Error("Room is full");
   }
 
-  room.players.push(input.userId);
-
   await Database.update({
     id: input.roomId,
-    players: room.players,
+    players: [...room.players, input.userId],
   });
 
   await Socket.emit({

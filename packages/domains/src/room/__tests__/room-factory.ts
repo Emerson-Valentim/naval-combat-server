@@ -17,7 +17,7 @@ export const buildRoom = (data?: any): Room => {
     id: "id",
     limit: 1,
     owner: "user-id",
-    players: ["user--id"],
+    players: ["user-id"],
     status: RoomStatus.CREATED,
     title: "Title",
     type: RoomType.PUBLIC,

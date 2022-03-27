@@ -8,15 +8,15 @@ type Input = {
 };
 
 const leave = async (Database: typeof DatabasePort, input: Input) => {
-  const rooms = await Database.findBy({ _id: input.roomId });
+  const room = await Database.findById(input.roomId);
 
-  if (!rooms.length) {
+  if (!room) {
     throw new Error("Room not found");
   }
 
-  const room = rooms[0];
+  const isPlayerInRoom = room.players.includes(input.userId);
 
-  if (!room?.players?.includes(input.userId)) {
+  if (!isPlayerInRoom) {
     return;
   }
 
