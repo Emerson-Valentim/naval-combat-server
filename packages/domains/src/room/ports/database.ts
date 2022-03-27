@@ -74,8 +74,15 @@ const findBy = async (filter: {
   return entity.find(filter);
 };
 
+const findById = async (id: string): Promise<Room | null> => {
+  const entity = await getEntity();
+
+  return entity.findById(id);
+};
+
 export default {
   findBy,
   create,
   update,
+  findById
 };

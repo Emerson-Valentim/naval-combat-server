@@ -3,6 +3,7 @@ import _list from "./list";
 import _create from "./create";
 import _registerSocket from "./register-socket";
 import _join from "./join";
+import _get from "./get";
 import _leave from "./leave";
 
 export default {
@@ -10,5 +11,6 @@ export default {
   registerSocket: _registerSocket(Database),
   list: _list(Database),
   join: _join(Database),
-  leave: _leave(Database)
+  leave: _leave(Database),
+  get: _get(Database)
 };
