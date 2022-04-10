@@ -35,9 +35,7 @@ jobs:
       - name: Compile project
         run: |
           yarn ci:compile
-          yarn workspace @naval-combat-server/${{ env.APPLICATION }} install
           yarn workspace @naval-combat-server/${{ env.APPLICATION }} ci:compile
-          yarn workspace @naval-combat-server/${{ env.APPLICATION }} compile
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
@@ -99,14 +97,10 @@ jobs:
       - name: Compile Dependencies
         run: |
           yarn ci:compile
-
-      - name: Install Dependencies
-        run: |
-          yarn
       
       - name: Compile project
         run: |
-          yarn compile
+          yarn workspace @naval-combat-server/${{ env.APPLICATION }} ci:compile
       
       - name: Zip release
         run: |
