@@ -6,7 +6,7 @@
     "start:local": "nodemon build/start.js",
     "start:server": "node build/start.js",
     "compile": "yarn tsc",
-    "ci:compile": "yarn tsc && yarn tsc",
+    "ci:compile": "yarn && yarn tsc",
     "compile:watch": "tsc --watch"
   },
   "devDependencies": {

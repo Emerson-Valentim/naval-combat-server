@@ -71,7 +71,6 @@ jobs:
   deploy-lambda:
     env:
       APPLICATION: api
-      WORKING_DIRECTORY: ./services/api
 
     defaults:
       run:
@@ -90,10 +89,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{env.REGION}}
 
-      - name: Install typescript
-        run: |
-          yarn add typescript
-
       - name: Compile Dependencies
         run: |
           yarn ci:compile
@@ -104,7 +99,7 @@ jobs:
       
       - name: Zip release
         run: |
-          zip -r release.zip node_modules build
+          zip -r release.zip services/api/node_modules services/api/build
 
       - name: Update lambda
         run: |
