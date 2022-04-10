@@ -12,8 +12,6 @@ env:
 
 jobs:
   deploy-notification:
-    if: true
-
     env:
       APPLICATION: notification
 
@@ -37,6 +35,7 @@ jobs:
       - name: Compile project
         run: |
           yarn workspace @naval-combat-server/${{ env.APPLICATION }} install
+          yarn workspace @naval-combat-server/${{ env.APPLICATION }} ci:install
           yarn workspace @naval-combat-server/${{ env.APPLICATION }} compile
 
       - name: Build, tag, and push image to Amazon ECR
@@ -71,8 +70,6 @@ jobs:
           wait-for-service-stability: true
 
   deploy-lambda:
-    if: true
-
     env:
       APPLICATION: api
       WORKING_DIRECTORY: ./services/api
