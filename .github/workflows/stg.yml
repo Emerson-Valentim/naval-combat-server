@@ -72,10 +72,6 @@ jobs:
     env:
       APPLICATION: api
 
-    defaults:
-      run:
-        working-directory: ${{env.WORKING_DIRECTORY}}
-
     runs-on: ubuntu-latest
 
     steps:
