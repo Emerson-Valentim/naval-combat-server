@@ -36,6 +36,7 @@ jobs:
 
       - name: Compile project
         run: |
+          yarn workspace @naval-combat-server/${{ env.APPLICATION }} install
           yarn workspace @naval-combat-server/${{ env.APPLICATION }} compile
 
       - name: Build, tag, and push image to Amazon ECR
