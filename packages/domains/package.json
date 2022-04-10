@@ -9,6 +9,7 @@
   "private": true,
   "scripts": {
     "compile": "yarn tsc",
+    "ci:compile": "yarn && yarn tsc",
     "compile:watch": "tsc --watch",
     "test": "jest -c jest.config.js"
   },
