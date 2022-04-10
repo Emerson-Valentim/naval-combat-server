@@ -34,7 +34,7 @@ jobs:
 
       - name: Compile project
         run: |
-          yarn workspace ci:compile
+          yarn ci:compile
           yarn workspace @naval-combat-server/${{ env.APPLICATION }} install
           yarn workspace @naval-combat-server/${{ env.APPLICATION }} ci:compile
           yarn workspace @naval-combat-server/${{ env.APPLICATION }} compile
@@ -98,7 +98,7 @@ jobs:
 
       - name: Compile Dependencies
         run: |
-          yarn workspace ci:compile
+          yarn ci:compile
 
       - name: Install Dependencies
         run: |
