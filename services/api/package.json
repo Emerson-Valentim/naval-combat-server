@@ -5,7 +5,7 @@
   "scripts": {
     "start:server": "node build/start.js",
     "compile": "npx webpack",
-    "ci:compile": "yarn && yarn tsc",
+    "ci:compile": "yarn && yarn compile",
     "compile:watch": "yarn compile --watch"
   },
   "devDependencies": {
