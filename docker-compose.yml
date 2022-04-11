@@ -11,12 +11,11 @@ services:
     networks:
       - api
     volumes:
-      - ./packages:/home/ubuntu/packages
       - ./services/api/build:/home/ubuntu/services/api/build
-      - ./services/api/node_modules:/home/ubuntu/services/api/node_modules
-    command: yarn workspace @naval-combat-server/api start:local
+    command: npx nodemon build/start.js
     depends_on:
       - mongo
+      - mongo-workbench
     ports:
       - "4000:4000"
 
@@ -31,14 +30,13 @@ services:
       - socket
       - mongo
     volumes:
-      - ./packages:/home/ubuntu/packages
       - ./services/notification/build:/home/ubuntu/services/notification/build
-      - ./services/notification/node_modules:/home/ubuntu/services/notification/node_modules
-    command: yarn workspace @naval-combat-server/notification start:local
+    command: npx nodemon build/start.js
     ports:
       - "3000:3000"
     depends_on:
       - mongo
+      - mongo-workbench
     extra_hosts:
       - "host.docker.internal:172.17.0.1"
 
