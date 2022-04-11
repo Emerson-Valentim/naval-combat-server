@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "main": "build/index.js",
   "files": [
-    "build/**",
+    "build",
     "package.json"
   ],
   "private": true,

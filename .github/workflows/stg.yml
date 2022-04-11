@@ -95,7 +95,9 @@ jobs:
       
       - name: Zip release
         run: |
-          zip -r release.zip services/api/node_modules services/api/build
+          cd services/api
+          zip -r -qq release.zip build
+          mv release.zip ../../release.zip
 
       - name: Update lambda
         run: |
