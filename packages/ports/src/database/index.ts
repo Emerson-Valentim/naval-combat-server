@@ -27,7 +27,7 @@ export default class Database {
 
     await mongoose.connect(this.address, {
       user: process.env.MONGODB_USERNAME,
-      passphrase: process.env.MONGODB_PASSWORD,
+      pass: process.env.MONGODB_PASSWORD,
     });
 
     this.connection = mongoose;
