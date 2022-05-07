@@ -25,7 +25,10 @@ export default class Database {
   private async connect(): Promise<void> {
     if (this.isConnected()) return;
 
-    await mongoose.connect(this.address);
+    await mongoose.connect(this.address, {
+      user: process.env.MONGODB_USERNAME,
+      passphrase: process.env.MONGODB_PASSWORD,
+    });
 
     this.connection = mongoose;
   }
