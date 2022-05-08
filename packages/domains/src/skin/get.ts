@@ -18,8 +18,9 @@ const get = async (
   const images = await authenticateFiles(SkinStorage, skin.images);
 
   return {
-    name: skin.name,
     id: skin.id,
+    name: skin.name,
+    cost: skin.cost,
     ...images,
   };
 };

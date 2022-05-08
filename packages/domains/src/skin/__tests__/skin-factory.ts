@@ -30,7 +30,8 @@ export const buildSkinStorageMock = (skinStorageMock?: any) => {
 export const buildSkin = (data?: any): Skin => {
   return {
     id: "id",
-    name: "name" ,
+    name: "name",
+    cost: 10,
     images: {
       scenario: {
         name: "name.png",

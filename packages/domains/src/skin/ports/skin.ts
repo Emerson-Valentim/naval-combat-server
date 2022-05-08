@@ -4,6 +4,7 @@ export interface Skin {
   id: string;
   name: string;
   images: Files;
+  cost: number;
 }
 
 export interface File {
@@ -35,6 +36,7 @@ const SkinSchema = {
       location: String,
     },
   },
+  cost: Number,
 };
 
 const Skin = new Database(process.env.MONGODB_ADDRESS!);

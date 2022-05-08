@@ -13,6 +13,7 @@ type Input = {
   images: {
     [key in SkinSection]: File;
   };
+  cost: number;
 };
 
 const add = async (
@@ -56,6 +57,7 @@ const add = async (
   await Database.create({
     name: loweredCasePackageName,
     images: files,
+    cost: input.cost
   });
 };
 
