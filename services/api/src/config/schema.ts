@@ -1,4 +1,4 @@
-import { gql } from 'apollo-server';
+import { gql } from "apollo-server";
 
 export const typeDefs = gql`
   input ExampleInput {
@@ -34,11 +34,47 @@ export const typeDefs = gql`
     roomId: String!
   }
 
+  input AddSkinInput {
+    packageName: String!
+    images: SkinImagesDefinition
+  }
+
+  input File {
+    filename: String!
+    base64: String!
+  }
+
+  input BuySkinInput {
+    skinId: String!
+  }
+
+  input RemoveSkinInput {
+    skinId: String!
+  }
+
+  input SkinImagesDefinition {
+    scenario: File!
+    avatar: File!
+  }
+
   type User {
-    id: String
+    id: ID!
     email: String!
     username: String!
     meta: UserMeta!
+    skin: UserSkin!
+  }
+
+  type UserSkin {
+    current: Skin!
+    available: [String]
+  }
+
+  type Skin {
+    id: ID!
+    name: String!
+    scenario: String!
+    avatar: String!
   }
 
   type UserMeta {
@@ -73,13 +109,15 @@ export const typeDefs = gql`
   }
 
   type Mutation {
-    example(input: ExampleInput!): Boolean
     createUser(input: CreateUserInput!): User!
     signIn(input: SignInInput!): SignIn!
     signOut: Boolean
     refresh(input: RefreshTokenInput!): SignIn!
     createRoom(input: CreateRoomInput!): Room!
     joinRoom(input: JoinRoomInput!): Boolean
+    addSkin(input: AddSkinInput!): Boolean
+    buySkin(input: BuySkinInput!): Boolean
+    removeSkin(input: RemoveSkinInput!): Boolean
   }
 
   type Query {
@@ -87,6 +125,6 @@ export const typeDefs = gql`
     getRooms: [Room]
     profile: User!
     getRoom(input: GetRoomInput!): Room!
+    getSkins: [Skin]
   }
-
 `;

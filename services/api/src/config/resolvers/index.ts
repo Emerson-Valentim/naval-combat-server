@@ -1,24 +1,26 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
-  accessToken as AccessTokenDomain,
-  user as UserDomain,
-  room as RoomDomain,
+  accessToken as AccessTokenDomain, room as RoomDomain,
+  skin as SkinDomain, user as UserDomain
 } from "@naval-combat-server/domains";
 
 import { NavalCombatSocket } from "../../ports/notification";
-
 import { ServerContext } from "../server";
 
-import signIn from "./user/sign-in";
-import createUser from "./user/create-user";
-import profile from "./user/profile";
-import signOut from "./user/sign-out";
+import refresh from "./accessToken/refresh";
 import createRoom from "./room/create-room";
+import getRoom from "./room/get-room";
 import getRooms from "./room/get-rooms";
 import joinRoom from "./room/join-room";
-import _getRoom from "./room/get-room";
-import refresh from "./accessToken/refresh";
-import example from "./example";
+import addSkin from "./skins/add-skin";
+import getSkin from "./skins/get-skin";
+import getSkins from "./skins/get-skins";
+import removeSkin from "./skins/remove-skin";
+import createUser from "./user/create-user";
+import profile from "./user/profile";
+import signIn from "./user/sign-in";
+import signOut from "./user/sign-out";
+import buySkin from "./skins/buy-skin";
 
 export const resolvers = {
   Query: {
@@ -33,11 +35,11 @@ export const resolvers = {
         userId: accessTokenData?.userId,
       }),
     getRoom: (_parent: any, _args: any, { accessTokenData }: ServerContext) =>
-      _getRoom(RoomDomain, _args.input, accessTokenData),
+      getRoom(RoomDomain, _args.input, accessTokenData),
+    getSkins: (_parent: any, _args: any, { accessTokenData }: ServerContext) =>
+      getSkins(SkinDomain, accessTokenData),
   },
   Mutation: {
-    example: async (_parent: any, _args: any) =>
-      example(NavalCombatSocket, _args.input),
     createUser: async (_parent: any, _args: any) =>
       createUser(UserDomain, _args.input),
     signIn: async (_parent: any, _args: any) => signIn(UserDomain, _args.input),
@@ -59,5 +61,27 @@ export const resolvers = {
       _args: any,
       { accessTokenData }: ServerContext
     ) => joinRoom(NavalCombatSocket, RoomDomain, accessTokenData, _args.input),
+    addSkin: async (
+      _parent: any,
+      _args: any,
+      { accessTokenData }: ServerContext
+    ) => addSkin(SkinDomain, accessTokenData, _args.input, ),
+    removeSkin: async (
+      _parent: any,
+      _args: any,
+      { accessTokenData }: ServerContext
+    ) => removeSkin(SkinDomain, accessTokenData, _args.input, ),
+    buySkin: async (
+      _parent: any,
+      _args: any,
+      { accessTokenData }: ServerContext
+    ) => buySkin(UserDomain, accessTokenData, _args.input, ),
   },
+  User: {
+    skin: async (
+      _parent: any,
+      _args: any,
+      { accessTokenData }: ServerContext
+    ) => getSkin(SkinDomain, UserDomain, accessTokenData),
+  }
 };
