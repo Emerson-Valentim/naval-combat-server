@@ -1,6 +1,8 @@
 import { Database, Hash } from "@naval-combat-server/ports";
 import { omit } from "ramda";
 
+import { Roles } from "../../access-token/@types/auth-token";
+
 export interface User {
   id: string;
   email: string;
@@ -13,10 +15,11 @@ export interface User {
   };
   skin: {
     current: string;
-    available: string[]
+    available: string[];
   };
   balance: number;
   socketId?: string;
+  roles: Roles[];
 }
 
 export type UserInput = Omit<User, "meta">;
@@ -35,7 +38,8 @@ const UserSchema = {
     available: [String],
   },
   balance: Number,
-  socketId: String
+  socketId: String,
+  roles: [String]
 };
 
 const User = new Database(process.env.MONGODB_ADDRESS!);
@@ -46,7 +50,10 @@ const getEntity = async () => {
   return UserEntity;
 };
 
-const findBy = async (field: "email" | "username" | "socketId", value: string): Promise<User | null> => {
+const findBy = async (
+  field: "email" | "username" | "socketId",
+  value: string
+): Promise<User | null> => {
   const entity = await getEntity();
 
   return entity.findOne({ [field]: value });
@@ -73,8 +80,9 @@ const create = async (user: UserInput) => {
     balance: 0,
     skin: {
       current: user.skin.current,
-      available: user.skin.available
-    }
+      available: user.skin.available,
+    },
+    roles: ["user"],
   };
 
   const createdUser = await entity.create(newUser);
@@ -101,5 +109,5 @@ export default {
   findBy,
   create,
   update,
-  findById
+  findById,
 };
