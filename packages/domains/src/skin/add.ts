@@ -1,7 +1,12 @@
 import { curry } from "ramda";
 import { FileStorage } from "@naval-combat-server/ports";
 
-import DatabasePort, { Files, SkinSection } from "./ports/skin";
+import DatabasePort, {
+  ImageFiles,
+  SoundFiles,
+  SkinImageSection,
+  SkinSoundSection,
+} from "./ports/skin";
 
 type File = {
   filename: string;
@@ -11,9 +16,50 @@ type File = {
 type Input = {
   packageName: string;
   images: {
-    [key in SkinSection]: File;
+    [key in SkinImageSection]: File;
+  };
+  sounds: {
+    [key in SkinSoundSection]: File;
   };
   cost: number;
+};
+
+const saveFiles = async <T extends ImageFiles | SoundFiles>(
+  SkinStorage: FileStorage,
+  files: { [key: string]: File },
+  packageName: string,
+  {
+    allowedExtensions,
+    type,
+  }: {
+    allowedExtensions: string[];
+    type: "image" | "audio";
+  }
+) => {
+  return Object.entries(files).reduce(
+    async (obj: Promise<T>, [section, { filename, base64 }]) => {
+      const [, extension] = filename.split(".");
+
+      if (!allowedExtensions.includes(extension)) {
+        throw new Error("Extension is not allowed");
+      }
+
+      const storageKey = await SkinStorage.add({
+        filename: `${packageName}/${filename}`,
+        base64,
+        contentType: `${type}/${extension}`,
+      });
+
+      return {
+        ...(await obj),
+        [section]: {
+          location: storageKey,
+          name: filename,
+        },
+      };
+    },
+    {} as any
+  );
 };
 
 const add = async (
@@ -29,35 +75,31 @@ const add = async (
     throw new Error("There is already a package with this name");
   }
 
-  const files = await Object.entries(input.images).reduce(
-    async (obj: Promise<Files>, [section, { filename, base64 }]) => {
-      const [, extension] = filename.split(".");
+  const images = await saveFiles<ImageFiles>(
+    SkinStorage,
+    input.images,
+    loweredCasePackageName,
+    {
+      allowedExtensions: ["png"],
+      type: "image",
+    }
+  );
 
-      if (!["png"].includes(extension)) {
-        throw new Error("Extension is not allowed");
-      }
-
-      const storageKey = await SkinStorage.add({
-        filename: `${loweredCasePackageName}/${filename}`,
-        base64: base64.replace(/^data:image\/\w+;base64,/, ""),
-        contentType: `image/${extension}`,
-      });
-
-      return {
-        ...(await obj),
-        [section]: {
-          location: storageKey,
-          name: filename,
-        },
-      };
-    },
-    {} as any
+  const sounds = await saveFiles<SoundFiles>(
+    SkinStorage,
+    input.sounds,
+    loweredCasePackageName,
+    {
+      allowedExtensions: ["mp4", "mp3"],
+      type: "audio",
+    }
   );
 
   await Database.create({
     name: loweredCasePackageName,
-    images: files,
-    cost: input.cost
+    images,
+    sounds,
+    cost: input.cost,
   });
 };
 
