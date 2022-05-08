@@ -39,7 +39,7 @@ const signIn = async (
     throw new Error("Invalid login");
   }
 
-  const tokens = await AccessToken.create(user.id);
+  const tokens = await AccessToken.create(user);
 
   return tokens;
 };

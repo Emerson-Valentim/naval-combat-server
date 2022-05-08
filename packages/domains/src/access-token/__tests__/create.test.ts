@@ -1,6 +1,8 @@
 import create from "../create";
 import { buildMock as buildSecretMock } from "../../secrets/__tests__/secrets-factory";
 
+import { buildUser } from "../../user/__tests__/user-factory";
+
 import { buildMock as buildAccessTokenMock } from "./access-token-factory";
 
 const buildMock = ({ accessTokenMock, secretMock }: any = {}) => ({
@@ -9,6 +11,8 @@ const buildMock = ({ accessTokenMock, secretMock }: any = {}) => ({
 });
 
 beforeEach(jest.clearAllMocks);
+
+const user = buildUser();
 
 test("should delete old token", async () => {
   const { Database, SecretManager } = buildMock({
@@ -21,13 +25,13 @@ test("should delete old token", async () => {
     },
   });
 
-  await create(Database, SecretManager, "user-id");
+  await create(Database, SecretManager, user);
 
-  expect(Database.findBy).toBeCalledWith("user-id");
-  expect(Database.remove).toBeCalledWith("user-id");
+  expect(Database.findBy).toBeCalledWith(user.id);
+  expect(Database.remove).toBeCalledWith(user.id);
 });
 
-test("should return save document at table", async () => {
+test("should save document at table", async () => {
   const document = buildAccessTokenMock();
 
   const { Database, SecretManager } = buildMock({
@@ -39,11 +43,11 @@ test("should return save document at table", async () => {
     },
   });
 
-  await create(Database, SecretManager, "user-id");
+  await create(Database, SecretManager, user);
 
   expect(Database.create).toBeCalledWith({
     accessToken: expect.any(String),
     refreshToken: expect.any(String),
-    userId: "user-id",
+    userId: user.id,
   });
 });
