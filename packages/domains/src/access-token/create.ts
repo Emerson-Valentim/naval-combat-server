@@ -2,18 +2,19 @@ import { curry } from "ramda";
 import jwt from "jsonwebtoken";
 
 import SecretManagerDomain from "../secrets";
+import { User } from "../user/ports/database";
 
 import AccessTokenDatabasePort from "./ports/database";
 
 const create = async (
   Database: typeof AccessTokenDatabasePort,
   SecretManager: typeof SecretManagerDomain,
-  userId: string
+  user: User
 ) => {
-  const oldAccessToken = await Database.findBy(userId);
+  const oldAccessToken = await Database.findBy(user.id);
 
   if (oldAccessToken) {
-    await Database.remove(userId);
+    await Database.remove(user.id);
   }
 
   const secret = await SecretManager.get("access-token-private-key");
@@ -21,7 +22,8 @@ const create = async (
   return await Database.create({
     accessToken: jwt.sign(
       {
-        userId: userId,
+        userId: user.id,
+        roles: user.roles
       },
       secret,
       {
@@ -31,7 +33,8 @@ const create = async (
     ),
     refreshToken: jwt.sign(
       {
-        userId: userId,
+        userId: user.id,
+        roles: user.roles
       },
       secret,
       {
@@ -39,7 +42,7 @@ const create = async (
         noTimestamp: true
       }
     ),
-    userId,
+    userId: user.id,
   });
 };
 

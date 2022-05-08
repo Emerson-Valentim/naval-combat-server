@@ -32,6 +32,7 @@ const refresh = async (
     accessToken: jwt.sign(
       {
         userId: decryptedToken.userId,
+        roles: decryptedToken.roles,
       },
       secret,
       {
@@ -42,6 +43,7 @@ const refresh = async (
     refreshToken: jwt.sign(
       {
         userId: decryptedToken.userId,
+        roles: decryptedToken.roles,
       },
       secret,
       {

@@ -1,5 +1,6 @@
 import { skin as SkinDomain } from "@naval-combat-server/domains";
 import { AuthToken } from "@naval-combat-server/domains/build/src/access-token/@types/auth-token";
+import { AuthenticationError, ForbiddenError } from "apollo-server";
 
 type File = {
   filename: string;
@@ -7,7 +8,7 @@ type File = {
 };
 
 type Input = {
-  packageName: string
+  packageName: string;
   cost: number;
   images: {
     scenario: File;
@@ -17,12 +18,20 @@ type Input = {
 
 const addSkin = async (
   skin: typeof SkinDomain,
-  _accessTokenData: AuthToken | undefined,
-  input: Input,
+  accessTokenData: AuthToken | undefined,
+  input: Input
 ) => {
-  // if(!_accessTokenData) {
-  //   throw new ForbiddenError("");
-  // }
+  if (!accessTokenData) {
+    throw new AuthenticationError("UNAUTHORIZED");
+  }
+
+  const isMaintainer = accessTokenData.roles.includes("maintainer");
+
+  const isAdmin = accessTokenData.roles.includes("admin");
+
+  if (!isMaintainer && !isAdmin) {
+    throw new ForbiddenError("FORBIDDEN");
+  }
 
   await skin.add(input);
 
