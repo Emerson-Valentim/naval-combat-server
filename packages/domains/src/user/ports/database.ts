@@ -14,7 +14,8 @@ export interface User {
   skin: {
     current: string;
     available: string[]
-  }
+  };
+  balance: number;
   socketId?: string;
 }
 
@@ -33,6 +34,7 @@ const UserSchema = {
     current: String,
     available: [String],
   },
+  balance: Number,
   socketId: String
 };
 
@@ -68,6 +70,7 @@ const create = async (user: UserInput) => {
       loses: 0,
       matches: 0,
     },
+    balance: 0,
     skin: {
       current: user.skin.current,
       available: user.skin.available
@@ -82,7 +85,7 @@ const create = async (user: UserInput) => {
 const update = async ({
   id,
   ...input
-}: (Pick<User, "socketId"> | Pick<User, "skin">) & {
+}: (Pick<User, "socketId"> | Pick<User, "skin" | "balance">) & {
   id: string;
 }): Promise<User> => {
   const entity = await getEntity();

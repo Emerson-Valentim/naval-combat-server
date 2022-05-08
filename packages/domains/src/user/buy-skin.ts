@@ -32,6 +32,12 @@ const buySkin = async (
     throw new Error("User has already bought this skin");
   }
 
+  const balanceAfterOperation = (user.balance - skin.cost);
+
+  if(balanceAfterOperation < 0) {
+    throw new Error("User has not enough balance");
+  }
+
   await Skin.buy({
     userId,
     skinId,
@@ -43,6 +49,7 @@ const buySkin = async (
       ...user.skin,
       available: [...availableSkins, skinId],
     },
+    balance: balanceAfterOperation,
   });
 };
 

@@ -48,7 +48,8 @@ describe("buySkin()", () => {
       skin: {
         current: user.skin.current,
         available: [...user.skin.available, skin.id]
-      }
+      },
+      balance: 90
     });
   });
 
@@ -120,6 +121,30 @@ describe("buySkin()", () => {
         userId: "id",
         skinId: "id"
       })).rejects.toThrowError("User has already bought this skin");
+    });
+  });
+
+  describe("provide user with no balance", () => {
+    it("and fails", async () => {
+      const user = buildUser({
+        balance: 9,
+      });
+
+      const skin = buildSkin();
+
+      const { Database, Skin } = buildMock({
+        skinMock: {
+          get: jest.fn().mockResolvedValue(skin)
+        },
+        userMock: {
+          findById: jest.fn().mockResolvedValue(user)
+        }
+      });
+
+      await expect(buySkin(Database, Skin, {
+        userId: "id",
+        skinId: "id"
+      })).rejects.toThrowError("User has not enough balance");
     });
   });
 });
