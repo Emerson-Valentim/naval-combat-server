@@ -26,16 +26,16 @@ const buySkin = async (
     throw new Error("User not found");
   }
 
-  await Skin.buy({
-    userId,
-    skinId,
-  });
-
   const availableSkins = user.skin.available;
 
   if (availableSkins.includes(skinId)) {
     throw new Error("User has already bought this skin");
   }
+
+  await Skin.buy({
+    userId,
+    skinId,
+  });
 
   await Database.update({
     id: userId,
