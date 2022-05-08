@@ -20,6 +20,10 @@ export const buildUser = (data?: any): User => {
       loses: 0,
       matches: 0,
     },
+    skin: {
+      available: ["skin"],
+      current: "skin"
+    },
     password: "password",
     username: "username",
     ...data,

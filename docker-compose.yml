@@ -1,6 +1,30 @@
 version: "3.8"
 
 services:
+  localstack:
+    image: localstack/localstack:0.14.2
+    ports:
+      - "4566-4583:4566-4583"
+    environment:
+      - SERVICES=s3
+      - EDGE_PORT=4566
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+      - AWS_ACCESS_KEY_ID=xxx
+      - AWS_SECRET_ACCESS_KEY=xxx
+      - DEFAULT_REGION=sa-east-1
+    volumes:
+      - "${TMPDIR:-/tmp}/localstack:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - ./localstack:/docker-entrypoint-initaws.d
+    healthcheck:
+      test: ["CMD", "awslocal", "s3api", "ls"]
+      interval: 1s
+      timeout: 3s
+      retries: 30
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
+
   #API configuration
   api:
     build:
@@ -16,6 +40,7 @@ services:
     depends_on:
       - mongo
       - mongo-workbench
+      - localstack
     ports:
       - "4000:4000"
 

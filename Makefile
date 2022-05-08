@@ -1,4 +1,9 @@
-up: api notification redis mongo mongo-workbench
+up: aws-mock api notification redis mongo
+
+restart: down up
+
+aws-mock:
+	docker-compose up -d localstack
 
 redis:
 	docker-compose up -d redis
@@ -11,3 +16,6 @@ notification:
 
 mongo:
 	docker-compose up -d mongo mongo-workbench
+
+down:
+	docker-compose down

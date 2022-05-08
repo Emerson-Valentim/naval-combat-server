@@ -11,6 +11,10 @@ export interface User {
     matches: number;
     loses: number;
   };
+  skin: {
+    current: string;
+    available: string[]
+  }
   socketId?: string;
 }
 
@@ -24,6 +28,10 @@ const UserSchema = {
     wins: Number,
     matches: Number,
     loses: Number,
+  },
+  skin: {
+    current: String,
+    available: [String],
   },
   socketId: String
 };
@@ -60,6 +68,10 @@ const create = async (user: UserInput) => {
       loses: 0,
       matches: 0,
     },
+    skin: {
+      current: user.skin.current,
+      available: user.skin.available
+    }
   };
 
   const createdUser = await entity.create(newUser);
@@ -70,7 +82,7 @@ const create = async (user: UserInput) => {
 const update = async ({
   id,
   ...input
-}: (Pick<User, "socketId">) & {
+}: (Pick<User, "socketId"> | Pick<User, "skin">) & {
   id: string;
 }): Promise<User> => {
   const entity = await getEntity();
