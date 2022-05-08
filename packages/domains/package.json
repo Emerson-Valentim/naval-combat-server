@@ -8,7 +8,7 @@
   ],
   "private": true,
   "scripts": {
-    "compile": "yarn tsc --project tsconfig.prod.json",
+    "compile": "yarn tsc",
     "ci:compile": "yarn && yarn tsc",
     "compile:watch": "yarn compile --watch",
     "test": "jest -c jest.config.js"

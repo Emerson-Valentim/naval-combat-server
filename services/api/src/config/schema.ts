@@ -36,6 +36,7 @@ export const typeDefs = gql`
 
   input AddSkinInput {
     packageName: String!
+    cost: Int!
     images: SkinImagesDefinition
   }
 

@@ -8,6 +8,7 @@ type File = {
 
 type Input = {
   packageName: string
+  cost: number;
   images: {
     scenario: File;
     avatar: File;

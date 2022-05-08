@@ -22,7 +22,7 @@ describe("getDefault()", () => {
       },
     });
 
-    await getDefault(Database);
+    await getDefault(Database, {});
 
     expect(Database.findBy).toBeCalledWith("name", "default");
   });
@@ -31,7 +31,7 @@ describe("getDefault()", () => {
     it("and fails", async () => {
       const { Database } = buildMock();
 
-      await expect(getDefault(Database)).rejects.toThrowError(
+      await expect(getDefault(Database, {})).rejects.toThrowError(
         "Default skin is not available"
       );
     });
