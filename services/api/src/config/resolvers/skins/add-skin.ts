@@ -14,6 +14,9 @@ type Input = {
     scenario: File;
     avatar: File;
   };
+  sounds: {
+    voice: File;
+  }
 };
 
 const addSkin = async (

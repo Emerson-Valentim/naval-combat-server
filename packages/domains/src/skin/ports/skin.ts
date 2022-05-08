@@ -3,7 +3,8 @@ import { Database } from "@naval-combat-server/ports";
 export interface Skin {
   id: string;
   name: string;
-  images: Files;
+  images: ImageFiles;
+  sounds: SoundFiles;
   cost: number;
 }
 
@@ -12,14 +13,22 @@ export interface File {
   location: string;
 }
 
-export enum SkinSection {
+export enum SkinImageSection {
   SCENARIO = "scenario",
   AVATAR = "avatar",
 }
 
-export interface Files {
-  [SkinSection.AVATAR]: File;
-  [SkinSection.SCENARIO]: File;
+export enum SkinSoundSection {
+  VOICE = "voice",
+}
+
+export interface ImageFiles {
+  [SkinImageSection.AVATAR]: File;
+  [SkinImageSection.SCENARIO]: File;
+}
+
+export interface SoundFiles {
+  [SkinSoundSection.VOICE]: File;
 }
 
 export type SkinInput = Omit<Skin, "id">;
@@ -32,6 +41,12 @@ const SkinSchema = {
       location: String,
     },
     avatar: {
+      name: String,
+      location: String,
+    },
+  },
+  sounds: {
+    voice: {
       name: String,
       location: String,
     },

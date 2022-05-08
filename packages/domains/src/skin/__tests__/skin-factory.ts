@@ -42,6 +42,12 @@ export const buildSkin = (data?: any): Skin => {
         location: "location"
       }
     },
+    sounds: {
+      voice: {
+        name: "voice.mp3",
+        location: "location"
+      }
+    },
     ...data,
   };
 };

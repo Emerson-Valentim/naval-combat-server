@@ -1,11 +1,14 @@
 import { FileStorage } from "@naval-combat-server/ports";
 
-import { Files, SkinSection } from "../ports/skin";
+import { ImageFiles, SoundFiles } from "../ports/skin";
 
-export const authenticateFiles = async (SkinStorage: FileStorage, files: Files) => {
+export const authenticateFiles = async <T extends ImageFiles | SoundFiles>(
+  SkinStorage: FileStorage,
+  files: T
+) => {
   return Object.entries(files).reduce(
     async (
-      obj: Promise<{ [key in SkinSection]: string }>,
+      obj: Promise<{ [key: string]: string }>,
       [section, { location, name }]
     ) => {
       const [, extension] = name.split(".");

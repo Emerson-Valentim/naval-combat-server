@@ -37,7 +37,8 @@ export const typeDefs = gql`
   input AddSkinInput {
     packageName: String!
     cost: Int!
-    images: SkinImagesDefinition
+    images: SkinImagesDefinition!
+    sounds: SkinSoundDefinition!
   }
 
   input File {
@@ -58,6 +59,10 @@ export const typeDefs = gql`
     avatar: File!
   }
 
+  input SkinSoundDefinition {
+    voice: File!
+  }
+
   type User {
     id: ID!
     email: String!
@@ -76,6 +81,7 @@ export const typeDefs = gql`
     name: String!
     scenario: String!
     avatar: String!
+    voice: String!
   }
 
   type UserMeta {
