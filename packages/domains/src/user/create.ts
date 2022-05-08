@@ -1,6 +1,8 @@
 import Joi from "joi";
 import { curry } from "ramda";
 
+import SkinDomain from "../skin";
+
 import UserDatabasePort, { UserInput } from "./ports/database";
 
 const createSchema = Joi.object({
@@ -15,7 +17,11 @@ const isEmailAvailable = (incomingEmail: string, email: string) =>
 const isUsernameAvailable = (incomingUsername: string, username: string) =>
   username.toLowerCase() !== incomingUsername.toLocaleLowerCase();
 
-const create = async (Database: typeof UserDatabasePort, input: UserInput) => {
+const create = async (
+  Database: typeof UserDatabasePort,
+  Skin: typeof SkinDomain,
+  input: UserInput
+) => {
   createSchema.validate(input);
 
   const findByEmail = await Database.findBy("email", input.email.trim());
@@ -33,10 +39,18 @@ const create = async (Database: typeof UserDatabasePort, input: UserInput) => {
     findByUsername &&
     !isUsernameAvailable(input.username, findByUsername.username)
   ) {
-    throw new Error("Username is not available");
+    throw new Error("Username is not registered");
   }
 
-  const user = await Database.create(input);
+  const defaultSkin = await Skin.getDefault({});
+
+  const user = await Database.create({
+    ...input,
+    skin: {
+      current: defaultSkin.id,
+      available: [defaultSkin.id],
+    },
+  });
 
   return user;
 };
