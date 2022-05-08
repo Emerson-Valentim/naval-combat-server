@@ -8,7 +8,7 @@ import add from "../add";
 const buildMock = ({ skinMock, skinStorageMock }: any = {}) => {
   return {
     Database: buildSkinMock(skinMock),
-    SkinStorage: buildSkinStorageMock(skinStorageMock)
+    SkinStorage: buildSkinStorageMock(skinStorageMock),
   };
 };
 
@@ -24,6 +24,13 @@ const buildInput = (data?: any) => ({
       base64: "base64",
     },
   },
+  sounds: {
+    voice: {
+      filename: "voice.mp3",
+      base64: "base64",
+    },
+  },
+  cost: 10,
   ...data,
 });
 
@@ -38,7 +45,8 @@ describe("add()", () => {
         add: jest
           .fn()
           .mockResolvedValueOnce("package/avatar.png")
-          .mockResolvedValueOnce("package/scenario.png"),
+          .mockResolvedValueOnce("package/scenario.png")
+          .mockResolvedValueOnce("package/voice.mp3"),
       },
     });
 
@@ -61,8 +69,15 @@ describe("add()", () => {
       contentType: "image/png",
     });
 
+    expect(SkinStorage.add).toHaveBeenNthCalledWith(3, {
+      filename: "package/voice.mp3",
+      base64: "base64",
+      contentType: "audio/mp3",
+    });
+
     expect(Database.create).toBeCalledWith({
       name: input.packageName.toLowerCase(),
+      cost: input.cost,
       images: {
         avatar: {
           location: "package/avatar.png",
@@ -71,6 +86,12 @@ describe("add()", () => {
         scenario: {
           location: "package/scenario.png",
           name: "scenario.png",
+        },
+      },
+      sounds: {
+        voice: {
+          location: "package/voice.mp3",
+          name: "voice.mp3",
         },
       },
     });
