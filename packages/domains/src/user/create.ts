@@ -39,10 +39,14 @@ const create = async (
     findByUsername &&
     !isUsernameAvailable(input.username, findByUsername.username)
   ) {
-    throw new Error("Username is not registered");
+    throw new Error("Username is not available");
   }
 
   const defaultSkin = await Skin.getDefault({});
+
+  if (!defaultSkin) {
+    throw new Error("Default skin is not registered");
+  }
 
   const user = await Database.create({
     ...input,

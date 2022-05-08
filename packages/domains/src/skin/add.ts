@@ -24,7 +24,7 @@ const add = async (
 
   const previousSkin = await Database.findBy("name", loweredCasePackageName);
 
-  if (previousSkin) {
+  if (previousSkin && previousSkin.name === loweredCasePackageName) {
     throw new Error("There is already a package with this name");
   }
 
@@ -39,7 +39,7 @@ const add = async (
       const storageKey = await SkinStorage.add({
         filename: `${loweredCasePackageName}/${filename}`,
         base64: base64.replace(/^data:image\/\w+;base64,/, ""),
-        contentType: `image/${extension}}`,
+        contentType: `image/${extension}`,
       });
 
       return {

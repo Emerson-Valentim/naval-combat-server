@@ -21,11 +21,9 @@
     "moduleResolution": "node",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
   },
   "exclude": [
-    "node_modules",
-    "**/__tests__/**",
-    "build/**"
+    "node_modules"
   ]
 }

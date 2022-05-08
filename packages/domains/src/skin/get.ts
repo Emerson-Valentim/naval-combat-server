@@ -12,7 +12,7 @@ const get = async (
   const skin = await Database.findById(id);
 
   if (!skin) {
-    throw new Error("Default skin is not available");
+    throw new Error("Skin not found");
   }
 
   const images = await authenticateFiles(SkinStorage, skin.images);
