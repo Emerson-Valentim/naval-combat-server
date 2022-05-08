@@ -1,7 +1,9 @@
 import Database from "./database";
-import hash from "./hash";
+import Hash from "./hash";
+import FileStorage from "./file-storage";
 
 export {
   Database,
-  hash
+  Hash,
+  FileStorage
 };
