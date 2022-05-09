@@ -1,65 +1,21 @@
-import { curry } from "ramda";
 import { FileStorage } from "@naval-combat-server/ports";
+import { curry } from "ramda";
 
 import DatabasePort, {
-  ImageFiles,
-  SoundFiles,
-  SkinImageSection,
-  SkinSoundSection,
+  ImageFiles, SkinImageSection,
+  SkinSoundSection, SoundFiles
 } from "./ports/skin";
-
-type File = {
-  filename: string;
-  base64: string;
-};
+import { IncomingFile, saveFiles } from "./utils/save-files";
 
 type Input = {
   packageName: string;
   images: {
-    [key in SkinImageSection]: File;
+    [key in SkinImageSection]: IncomingFile;
   };
   sounds: {
-    [key in SkinSoundSection]: File;
+    [key in SkinSoundSection]: IncomingFile;
   };
   cost: number;
-};
-
-const saveFiles = async <T extends ImageFiles | SoundFiles>(
-  SkinStorage: FileStorage,
-  files: { [key: string]: File },
-  packageName: string,
-  {
-    allowedExtensions,
-    type,
-  }: {
-    allowedExtensions: string[];
-    type: "image" | "audio";
-  }
-) => {
-  return Object.entries(files).reduce(
-    async (obj: Promise<T>, [section, { filename, base64 }]) => {
-      const [, extension] = filename.split(".");
-
-      if (!allowedExtensions.includes(extension)) {
-        throw new Error("Extension is not allowed");
-      }
-
-      const storageKey = await SkinStorage.add({
-        filename: `${packageName}/${filename}`,
-        base64,
-        contentType: `${type}/${extension}`,
-      });
-
-      return {
-        ...(await obj),
-        [section]: {
-          location: storageKey,
-          name: filename,
-        },
-      };
-    },
-    {} as any
-  );
 };
 
 const add = async (
@@ -80,7 +36,6 @@ const add = async (
     input.images,
     loweredCasePackageName,
     {
-      allowedExtensions: ["png"],
       type: "image",
     }
   );
@@ -90,7 +45,6 @@ const add = async (
     input.sounds,
     loweredCasePackageName,
     {
-      allowedExtensions: ["mp4", "mp3"],
       type: "audio",
     }
   );
