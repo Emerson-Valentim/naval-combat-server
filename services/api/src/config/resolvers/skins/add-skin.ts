@@ -2,7 +2,7 @@ import { skin as SkinDomain } from "@naval-combat-server/domains";
 import { AuthToken } from "@naval-combat-server/domains/build/src/access-token/@types/auth-token";
 import { AuthenticationError, ForbiddenError } from "apollo-server";
 
-type File = {
+export type File = {
   filename: string;
   base64: string;
 };
@@ -16,7 +16,7 @@ type Input = {
   };
   sounds: {
     voice: File;
-  }
+  };
 };
 
 const addSkin = async (
@@ -24,6 +24,14 @@ const addSkin = async (
   accessTokenData: AuthToken | undefined,
   input: Input
 ) => {
+  const skins = await skin.list({});
+
+  if (!skins.length && input.packageName === "default") {
+    await skin.add(input);
+
+    return true;
+  }
+
   if (!accessTokenData) {
     throw new AuthenticationError("UNAUTHORIZED");
   }
