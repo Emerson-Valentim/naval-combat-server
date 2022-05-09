@@ -14,7 +14,7 @@ export const authenticateFiles = async <T extends ImageFiles | SoundFiles>(
       const [, extension] = name.split(".");
 
       const signedUrl = await SkinStorage.get({
-        filename: location,
+        location,
         contentType: `image/${extension}`,
       });
 

@@ -73,7 +73,7 @@ const create = async (input: SkinInput): Promise<Skin> => {
 const update = async ({
   id,
   ...input
-}: Partial<Pick<Skin, "images" | "name">> & {
+}: Partial<Pick<Skin, "images" | "name" | "sounds" | "cost">> & {
   id: string;
 }): Promise<Skin> => {
   const entity = await getEntity();

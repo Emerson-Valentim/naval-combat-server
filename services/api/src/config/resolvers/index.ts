@@ -21,6 +21,7 @@ import profile from "./user/profile";
 import signIn from "./user/sign-in";
 import signOut from "./user/sign-out";
 import buySkin from "./skins/buy-skin";
+import updateSkin from "./skins/update-skin";
 
 export const resolvers = {
   Query: {
@@ -76,6 +77,11 @@ export const resolvers = {
       _args: any,
       { accessTokenData }: ServerContext
     ) => buySkin(UserDomain, accessTokenData, _args.input, ),
+    updateSkin: async (
+      _parent: any,
+      _args: any,
+      { accessTokenData }: ServerContext
+    ) => updateSkin(SkinDomain, accessTokenData, _args.input),
   },
   User: {
     skin: async (

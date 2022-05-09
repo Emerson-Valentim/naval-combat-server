@@ -2,6 +2,7 @@ import {
   S3Client,
   PutObjectCommand,
   GetObjectCommand,
+  DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
@@ -28,14 +29,14 @@ export default class FileStorage {
   }
 
   public async get({
-    filename,
+    location,
     contentType,
   }: {
-    filename: string;
+    location: string;
     contentType: string;
   }): Promise<string> {
     const command = new GetObjectCommand({
-      Key: filename,
+      Key: location,
       Bucket: this.bucket,
       ResponseContentType: contentType,
     });
@@ -46,17 +47,17 @@ export default class FileStorage {
   }
 
   public async add({
-    filename,
+    location,
     base64,
     contentType,
   }: {
-    filename: string;
+    location: string;
     base64: string;
     contentType: string;
   }): Promise<string> {
     const command = new PutObjectCommand({
       Bucket: this.bucket,
-      Key: filename,
+      Key: location,
       Body: Buffer.from(base64, "base64"),
       ContentEncoding: "base64",
       ContentType: contentType,
@@ -64,6 +65,17 @@ export default class FileStorage {
 
     await this.client.send(command);
 
-    return filename;
+    return location;
+  }
+
+  public async remove({ location }: { location: string }): Promise<void> {
+    const command = new DeleteObjectCommand({
+      Bucket: this.bucket,
+      Key: location,
+    });
+
+    await this.client.send(command);
+
+    return;
   }
 }

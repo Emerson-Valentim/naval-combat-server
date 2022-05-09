@@ -41,6 +41,14 @@ export const typeDefs = gql`
     sounds: SkinSoundDefinition!
   }
 
+  input UpdateSkinInput {
+    id: ID!
+    cost: Int
+    name: String
+    images: SkinImagesDefinition
+    sounds: SkinSoundDefinition
+  }
+
   input File {
     filename: String!
     base64: String!
@@ -55,12 +63,12 @@ export const typeDefs = gql`
   }
 
   input SkinImagesDefinition {
-    scenario: File!
-    avatar: File!
+    scenario: File
+    avatar: File
   }
 
   input SkinSoundDefinition {
-    voice: File!
+    voice: File
   }
 
   type User {
@@ -125,6 +133,7 @@ export const typeDefs = gql`
     addSkin(input: AddSkinInput!): Boolean
     buySkin(input: BuySkinInput!): Boolean
     removeSkin(input: RemoveSkinInput!): Boolean
+    updateSkin(input: UpdateSkinInput!): Boolean
   }
 
   type Query {

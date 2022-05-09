@@ -27,7 +27,11 @@ export default class Server {
   }
 
   public static lambda() {
-    const lambdaServer = new LambdaApolloServer(Server.generateConfig());
+    const lambdaServer = new LambdaApolloServer({
+      ...Server.generateConfig(),
+      // @ts-expect-error type is not defined correctly
+      cors: true
+    });
 
     return lambdaServer.createHandler();
   }
