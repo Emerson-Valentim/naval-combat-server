@@ -32,12 +32,12 @@ describe("get()", () => {
     expect(Database.findById).toBeCalledWith("id");
 
     expect(SkinStorage.get).toHaveBeenNthCalledWith(1, {
-      filename: "location",
+      location: "location",
       contentType: "image/png",
     });
 
     expect(SkinStorage.get).toHaveBeenNthCalledWith(2, {
-      filename: "location",
+      location: "location",
       contentType: "image/png",
     });
   });

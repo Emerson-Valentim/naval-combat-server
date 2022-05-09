@@ -58,19 +58,19 @@ describe("add()", () => {
     );
 
     expect(SkinStorage.add).toHaveBeenNthCalledWith(1, {
-      filename: "package/avatar.png",
+      location: "package/avatar.png",
       base64: "base64",
       contentType: "image/png",
     });
 
     expect(SkinStorage.add).toHaveBeenNthCalledWith(2, {
-      filename: "package/scenario.png",
+      location: "package/scenario.png",
       base64: "base64",
       contentType: "image/png",
     });
 
     expect(SkinStorage.add).toHaveBeenNthCalledWith(3, {
-      filename: "package/voice.mp3",
+      location: "package/voice.mp3",
       base64: "base64",
       contentType: "audio/mp3",
     });
