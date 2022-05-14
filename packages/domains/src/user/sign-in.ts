@@ -41,7 +41,10 @@ const signIn = async (
 
   const tokens = await AccessToken.create(user);
 
-  return tokens;
+  return {
+    tokens,
+    roles: user.roles
+  };
 };
 
 export default curry(signIn);

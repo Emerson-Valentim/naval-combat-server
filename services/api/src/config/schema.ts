@@ -1,6 +1,12 @@
 import { gql } from "apollo-server";
 
 export const typeDefs = gql`
+  enum Roles {
+    admin
+    user
+    maintainer
+  }
+
   input ExampleInput {
     value: String!
   }
@@ -77,6 +83,7 @@ export const typeDefs = gql`
     username: String!
     meta: UserMeta!
     skin: UserSkin!
+    roles: [Roles]
   }
 
   type UserSkin {
@@ -86,6 +93,7 @@ export const typeDefs = gql`
 
   type Skin {
     id: ID!
+    cost: Int!
     name: String!
     scenario: String!
     avatar: String!
@@ -98,9 +106,14 @@ export const typeDefs = gql`
     loses: Int!
   }
 
-  type SignIn {
+  type Tokens {
     accessToken: String!
     refreshToken: String!
+  }
+
+  type SignIn {
+    tokens: Tokens!
+    roles: [Roles]!
   }
 
   type Room {
