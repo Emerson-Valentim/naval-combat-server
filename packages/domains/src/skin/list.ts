@@ -23,6 +23,7 @@ const list = async (
     return {
       name: skin.name,
       id: skin.id,
+      cost: skin.cost,
       ...sounds,
       ...images,
     };
