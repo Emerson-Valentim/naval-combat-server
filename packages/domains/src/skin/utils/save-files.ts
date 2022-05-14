@@ -9,7 +9,7 @@ export type IncomingFile = {
 
 const allowedExtensions = {
   image: ["png", "jpeg"],
-  audio: ["mp3", "mp4"],
+  audio: ["mp3", "mp4", "mpeg"],
 };
 
 export const saveFiles = async <
