@@ -5,10 +5,6 @@ const getSkins = async (
   skin: typeof SkinDomain,
   _accessTokenData: AuthToken | undefined
 ) => {
-  // if(!_accessTokenData) {
-  //   throw new ForbiddenError("");
-  // }
-
   const skins = await skin.list({});
 
   return skins;
