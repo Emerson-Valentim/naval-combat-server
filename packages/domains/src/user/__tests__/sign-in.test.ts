@@ -57,10 +57,11 @@ test("should error because password is not right", async () => {
 
 test("should return accessToken and refreshToken", async () => {
   const input = buildInput();
+  const user = buildUser();
 
   const { Database, Hash, AccessToken } = buildMock({
     userMock: {
-      findBy: jest.fn().mockResolvedValue(buildUser()),
+      findBy: jest.fn().mockResolvedValue(user),
     },
     hashMock: {
       verify: jest.fn().mockResolvedValue(true)
@@ -78,7 +79,10 @@ test("should return accessToken and refreshToken", async () => {
   expect(AccessToken.create).toBeCalled();
 
   expect(response).toEqual({
-    accessToken: "accessToken",
-    refreshToken: "refreshToken"
+    tokens: {
+      accessToken: "accessToken",
+      refreshToken: "refreshToken"
+    },
+    roles: user.roles
   });
 });

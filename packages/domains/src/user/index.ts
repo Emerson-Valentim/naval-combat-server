@@ -10,6 +10,8 @@ import _signIn from "./sign-in";
 import _signOut from "./sign-out";
 import _registerSocket from "./register-socket";
 import _buySkin from "./buy-skin";
+import _updateRoles from "./update-roles";
+import _list from "./list";
 
 export default {
   create: _create(Database, Skin),
@@ -17,5 +19,7 @@ export default {
   signOut: _signOut(AccessToken),
   registerSocket: _registerSocket(Database),
   get: _get(Database),
-  buySkin: _buySkin(Database, Skin)
+  buySkin: _buySkin(Database, Skin),
+  updateRoles: _updateRoles(Database),
+  list: _list(Database)
 };

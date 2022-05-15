@@ -39,7 +39,7 @@ const UserSchema = {
   },
   balance: Number,
   socketId: String,
-  roles: [String]
+  roles: [String],
 };
 
 const User = new Database(process.env.MONGODB_ADDRESS!);
@@ -93,16 +93,24 @@ const create = async (user: UserInput) => {
 const update = async ({
   id,
   ...input
-}: (Pick<User, "socketId"> | Pick<User, "skin" | "balance">) & {
+}: (Pick<User, "socketId"> | Pick<User, "skin" | "balance" | "roles">) & {
   id: string;
 }): Promise<User> => {
   const entity = await getEntity();
 
   await entity.findByIdAndUpdate(id, input);
 
-  const room = await entity.findById(id);
+  const user = await entity.findById(id);
 
-  return room;
+  return user;
+};
+
+const list = async () => {
+  const entity = await getEntity();
+
+  const users = await entity.find();
+
+  return users;
 };
 
 export default {
@@ -110,4 +118,5 @@ export default {
   create,
   update,
   findById,
+  list,
 };

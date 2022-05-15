@@ -22,6 +22,8 @@ import signIn from "./user/sign-in";
 import signOut from "./user/sign-out";
 import buySkin from "./skins/buy-skin";
 import updateSkin from "./skins/update-skin";
+import updateRoles from "./user/update-roles";
+import getUsers from "./user/get-users";
 
 export const resolvers = {
   Query: {
@@ -39,6 +41,8 @@ export const resolvers = {
       getRoom(RoomDomain, _args.input, accessTokenData),
     getSkins: (_parent: any, _args: any, { accessTokenData }: ServerContext) =>
       getSkins(SkinDomain, accessTokenData),
+    getUsers: (_parent: any, _args: any, { accessTokenData }: ServerContext) =>
+      getUsers(UserDomain, accessTokenData),
   },
   Mutation: {
     createUser: async (_parent: any, _args: any) =>
@@ -82,6 +86,11 @@ export const resolvers = {
       _args: any,
       { accessTokenData }: ServerContext
     ) => updateSkin(SkinDomain, accessTokenData, _args.input),
+    updateRoles: async (
+      _parent: any,
+      _args: any,
+      { accessTokenData }: ServerContext
+    ) => updateRoles(UserDomain, accessTokenData, _args.input),
   },
   User: {
     skin: async (

@@ -2,6 +2,8 @@ import { skin as SkinDomain } from "@naval-combat-server/domains";
 import { AuthToken } from "@naval-combat-server/domains/build/src/access-token/@types/auth-token";
 import { AuthenticationError, ForbiddenError } from "apollo-server";
 
+import { roleChecker } from "../../tools";
+
 export type File = {
   filename: string;
   base64: string;
@@ -36,9 +38,7 @@ const addSkin = async (
     throw new AuthenticationError("UNAUTHORIZED");
   }
 
-  const isMaintainer = accessTokenData.roles.includes("maintainer");
-
-  const isAdmin = accessTokenData.roles.includes("admin");
+  const { isMaintainer, isAdmin } = roleChecker(accessTokenData);
 
   if (!isMaintainer && !isAdmin) {
     throw new ForbiddenError("FORBIDDEN");

@@ -77,13 +77,19 @@ export const typeDefs = gql`
     voice: File
   }
 
+  input UpdateRolesInput {
+    userId: String!
+    roles: [Roles]!
+  }
+
   type User {
     id: ID!
     email: String!
     username: String!
     meta: UserMeta!
     skin: UserSkin!
-    roles: [Roles]
+    roles: [Roles]!
+    balance: Int!
   }
 
   type UserSkin {
@@ -147,6 +153,7 @@ export const typeDefs = gql`
     buySkin(input: BuySkinInput!): Boolean
     removeSkin(input: RemoveSkinInput!): Boolean
     updateSkin(input: UpdateSkinInput!): Boolean
+    updateRoles(input: UpdateRolesInput!): Boolean
   }
 
   type Query {
@@ -155,5 +162,6 @@ export const typeDefs = gql`
     profile: User!
     getRoom(input: GetRoomInput!): Room!
     getSkins: [Skin]
+    getUsers: [User]
   }
 `;
