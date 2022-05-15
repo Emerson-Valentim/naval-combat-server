@@ -12,6 +12,7 @@ import _registerSocket from "./register-socket";
 import _buySkin from "./buy-skin";
 import _updateRoles from "./update-roles";
 import _list from "./list";
+import _addBalance from "./add-balance";
 
 export default {
   create: _create(Database, Skin),
@@ -21,5 +22,6 @@ export default {
   get: _get(Database),
   buySkin: _buySkin(Database, Skin),
   updateRoles: _updateRoles(Database),
-  list: _list(Database)
+  list: _list(Database),
+  addBalance: _addBalance(Database)
 };
