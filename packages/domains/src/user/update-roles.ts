@@ -14,19 +14,19 @@ const updateRoles = async(Database: typeof DatabasePort, {userId, agentId, roles
   const agent = await Database.findById(agentId);
 
   if(!agent) {
-    throw new Error("");
+    throw new Error("Agent not found");
   }
 
   const isMissingRoleOnAgent = roles.filter((role) => !agent.roles.includes(role)).length;
 
   if(isMissingRoleOnAgent) {
-    throw new Error("");
+    throw new Error("User can't provide access");
   }
 
   const user = await Database.findById(userId);
 
   if(!user) {
-    throw new Error("");
+    throw new Error("User not found");
   }
 
   const newRoles = new Set(["user" as Roles, ...roles]);
