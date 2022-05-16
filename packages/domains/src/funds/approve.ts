@@ -1,6 +1,8 @@
 import { DateTime } from "luxon";
 import { curry } from "ramda";
 
+import { Socket } from "../@types/socket";
+
 import UserDomain from "../user";
 
 import DatabasePort, { FundsStatus } from "./ports/database";
@@ -13,6 +15,7 @@ type Input = {
 const approve = async (
   Database: typeof DatabasePort,
   User: typeof UserDomain,
+  Socket: Socket,
   input: Input
 ) => {
   const agent = await User.get(input.agentId, "id");
@@ -36,9 +39,16 @@ const approve = async (
     status: FundsStatus.CREDITED,
   });
 
-  await User.addBalance({
+  await User.addBalance(Socket, {
     user: await User.get(fund.userId, "id"),
     value: fund.value
+  });
+
+  await Socket.emit({
+    channel: "server:funds:approve",
+    message: {
+      id: fund.id
+    }
   });
 
   return;
