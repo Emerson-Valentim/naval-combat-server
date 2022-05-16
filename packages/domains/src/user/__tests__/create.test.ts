@@ -31,7 +31,7 @@ test("should call database with right parameters on creation", async () => {
 
   const { Database, Skin, Socket } = buildMock({
     userMock: {
-      create: jest.fn(),
+      create: jest.fn().mockResolvedValue({ id: "user-id"}),
     },
     skinMock: {
       getDefault: jest.fn().mockResolvedValue(skin),
