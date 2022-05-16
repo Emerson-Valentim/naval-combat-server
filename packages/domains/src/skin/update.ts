@@ -55,8 +55,8 @@ const update = async (
     throw new Error("Skin not found");
   }
 
-  if (skin.name === "default") {
-    throw new Error("Default skin is not updatable");
+  if (skin.name === "default" && skin.name !== input.name) {
+    throw new Error("Default skin name is not updatable");
   }
 
   const updatedName = (input.name || skin.name).toLocaleLowerCase();
