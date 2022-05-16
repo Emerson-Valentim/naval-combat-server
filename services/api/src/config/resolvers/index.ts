@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
-  accessToken as AccessTokenDomain, room as RoomDomain,
+  accessToken as AccessTokenDomain, funds as FundsDomain, room as RoomDomain,
   skin as SkinDomain, user as UserDomain
 } from "@naval-combat-server/domains";
 
@@ -8,22 +8,25 @@ import { NavalCombatSocket } from "../../ports/notification";
 import { ServerContext } from "../server";
 
 import refresh from "./accessToken/refresh";
+import approveFunds from "./funds/approve-funds";
+import getPendingFunds from "./funds/get-pending-funds";
+import requestFunds from "./funds/request-funds";
 import createRoom from "./room/create-room";
 import getRoom from "./room/get-room";
 import getRooms from "./room/get-rooms";
 import joinRoom from "./room/join-room";
 import addSkin from "./skins/add-skin";
+import buySkin from "./skins/buy-skin";
 import getSkin from "./skins/get-skin";
 import getSkins from "./skins/get-skins";
 import removeSkin from "./skins/remove-skin";
+import updateSkin from "./skins/update-skin";
 import createUser from "./user/create-user";
+import getUsers from "./user/get-users";
 import profile from "./user/profile";
 import signIn from "./user/sign-in";
 import signOut from "./user/sign-out";
-import buySkin from "./skins/buy-skin";
-import updateSkin from "./skins/update-skin";
 import updateRoles from "./user/update-roles";
-import getUsers from "./user/get-users";
 
 export const resolvers = {
   Query: {
@@ -43,6 +46,8 @@ export const resolvers = {
       getSkins(SkinDomain, accessTokenData),
     getUsers: (_parent: any, _args: any, { accessTokenData }: ServerContext) =>
       getUsers(UserDomain, accessTokenData),
+    getPendingFunds: (_parent: any, _args: any, { accessTokenData }: ServerContext) =>
+      getPendingFunds(FundsDomain, accessTokenData),
   },
   Mutation: {
     createUser: async (_parent: any, _args: any) =>
@@ -91,6 +96,16 @@ export const resolvers = {
       _args: any,
       { accessTokenData }: ServerContext
     ) => updateRoles(UserDomain, accessTokenData, _args.input),
+    approveFunds: async (
+      _parent: any,
+      _args: any,
+      { accessTokenData }: ServerContext
+    ) => approveFunds(FundsDomain, accessTokenData, _args.input),
+    requestFunds: async (
+      _parent: any,
+      _args: any,
+      { accessTokenData }: ServerContext
+    ) => requestFunds(FundsDomain, accessTokenData, _args.input),
   },
   User: {
     skin: async (

@@ -82,6 +82,14 @@ export const typeDefs = gql`
     roles: [Roles]!
   }
 
+  input RequestFundsInput {
+    value: Int!
+  }
+
+  input ApproveFundsInput {
+    id: String!
+  }
+
   type User {
     id: ID!
     email: String!
@@ -132,6 +140,13 @@ export const typeDefs = gql`
     status: RoomStatus
   }
 
+  type Funds {
+    id: String!
+    username: String!
+    status: FundsStatus!
+    value: Int!
+  }
+
   enum RoomType {
     PRIVATE
     PUBLIC
@@ -140,6 +155,11 @@ export const typeDefs = gql`
   enum RoomStatus {
     CREATING
     CREATED
+  }
+
+  enum FundsStatus {
+    PENDING
+    CREDITED
   }
 
   type Mutation {
@@ -154,6 +174,8 @@ export const typeDefs = gql`
     removeSkin(input: RemoveSkinInput!): Boolean
     updateSkin(input: UpdateSkinInput!): Boolean
     updateRoles(input: UpdateRolesInput!): Boolean
+    requestFunds(input: RequestFundsInput!): Boolean
+    approveFunds(input: ApproveFundsInput!): Boolean
   }
 
   type Query {
@@ -163,5 +185,6 @@ export const typeDefs = gql`
     getRoom(input: GetRoomInput!): Room!
     getSkins: [Skin]
     getUsers: [User]
+    getPendingFunds: [Funds]
   }
 `;
