@@ -9,6 +9,9 @@ const buildMock = ({ skinMock, skinStorageMock }: any = {}) => {
   return {
     Database: buildSkinMock(skinMock),
     SkinStorage: buildSkinStorageMock(skinStorageMock),
+    Socket: {
+      emit: jest.fn()
+    }
   };
 };
 
@@ -40,7 +43,7 @@ describe("add()", () => {
       packageName: "Package",
     });
 
-    const { Database, SkinStorage } = buildMock({
+    const { Database, SkinStorage, Socket } = buildMock({
       skinStorageMock: {
         add: jest
           .fn()
@@ -50,7 +53,7 @@ describe("add()", () => {
       },
     });
 
-    await add(Database, SkinStorage, input);
+    await add(Database, SkinStorage, Socket, input);
 
     expect(Database.findBy).toBeCalledWith(
       "name",
@@ -101,7 +104,7 @@ describe("add()", () => {
     it("and fail", async () => {
       const input = buildInput();
 
-      const { Database, SkinStorage } = buildMock({
+      const { Database, SkinStorage, Socket } = buildMock({
         skinMock: {
           findBy: jest.fn().mockResolvedValue(
             buildSkin({
@@ -111,7 +114,7 @@ describe("add()", () => {
         },
       });
 
-      await expect(add(Database, SkinStorage, input)).rejects.toThrowError(
+      await expect(add(Database, SkinStorage, Socket, input)).rejects.toThrowError(
         "There is already a package with this name"
       );
     });
@@ -128,9 +131,9 @@ describe("add()", () => {
         },
       });
 
-      const { Database, SkinStorage } = buildMock();
+      const { Database, SkinStorage, Socket } = buildMock();
 
-      await expect(add(Database, SkinStorage, input)).rejects.toThrowError(
+      await expect(add(Database, SkinStorage, Socket, input)).rejects.toThrowError(
         "Extension is not allowed"
       );
     });

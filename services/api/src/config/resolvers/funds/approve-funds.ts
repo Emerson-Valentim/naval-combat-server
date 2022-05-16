@@ -1,14 +1,20 @@
-import { funds as FundsDomain, user } from "@naval-combat-server/domains";
-import { AuthenticationError, ForbiddenError } from "apollo-server";
+import { funds as FundsDomain } from "@naval-combat-server/domains";
 import { AuthToken } from "@naval-combat-server/domains/build/src/access-token/@types/auth-token";
+import { AuthenticationError, ForbiddenError } from "apollo-server";
 
+import { NavalCombatSocket as NavalCombatSocketPort } from "../../../ports/notification";
 import { roleChecker } from "../../tools";
 
 type Input = {
-  id: string
-}
+  id: string;
+};
 
-const approveFunds = async (funds: typeof FundsDomain, accessTokenData: AuthToken | undefined, input: Input) => {
+const approveFunds = async (
+  funds: typeof FundsDomain,
+  NavalCombatSocket: typeof NavalCombatSocketPort,
+  accessTokenData: AuthToken | undefined,
+  input: Input
+) => {
   if (!accessTokenData) {
     throw new AuthenticationError("UNAUTHORIZED");
   }
@@ -19,9 +25,9 @@ const approveFunds = async (funds: typeof FundsDomain, accessTokenData: AuthToke
     throw new ForbiddenError("FORBIDDEN");
   }
 
-  await funds.approve({
+  await funds.approve(NavalCombatSocket, {
     agentId: accessTokenData.userId,
-    id: input.id
+    id: input.id,
   });
 
   return true;

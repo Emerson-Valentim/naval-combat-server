@@ -1,5 +1,7 @@
 import { curry } from "ramda";
 
+import { Socket } from "../@types/socket";
+
 import DatabasePort, { RoomStatus, RoomType } from "./ports/database";
 
 type Input = {
@@ -11,7 +13,7 @@ type Input = {
 
 const create = async (
   Database: typeof DatabasePort,
-  Socket: { emit: (input: { channel: string; message: any }) => void },
+  Socket: Socket,
   { userId, ...input }: Input
 ) => {
   const currentRooms = await Database.findBy({

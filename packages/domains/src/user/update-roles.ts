@@ -1,5 +1,6 @@
 import { curry } from "ramda";
 
+import { Socket } from "../@types/socket";
 import { Roles } from "../access-token/@types/auth-token";
 
 import DatabasePort from "./ports/database";
@@ -12,6 +13,7 @@ type Input = {
 
 const updateRoles = async (
   Database: typeof DatabasePort,
+  Socket: Socket,
   { userId, agentId, roles }: Input
 ) => {
   const agent = await Database.findById(agentId);
@@ -39,6 +41,13 @@ const updateRoles = async (
   await Database.update({
     id: user.id,
     roles: Array.from(newRoles),
+  });
+
+  await Socket.emit({
+    channel: "server:user:update",
+    message: {
+      id: user.id
+    }
   });
 
   return;

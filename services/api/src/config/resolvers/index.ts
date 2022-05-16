@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
-  accessToken as AccessTokenDomain, funds as FundsDomain, room as RoomDomain,
-  skin as SkinDomain, user as UserDomain
+  accessToken as AccessTokenDomain,
+  funds as FundsDomain,
+  room as RoomDomain,
+  skin as SkinDomain,
+  user as UserDomain,
 } from "@naval-combat-server/domains";
 
 import { NavalCombatSocket } from "../../ports/notification";
@@ -46,12 +49,15 @@ export const resolvers = {
       getSkins(SkinDomain, accessTokenData),
     getUsers: (_parent: any, _args: any, { accessTokenData }: ServerContext) =>
       getUsers(UserDomain, accessTokenData),
-    getPendingFunds: (_parent: any, _args: any, { accessTokenData }: ServerContext) =>
-      getPendingFunds(FundsDomain, accessTokenData),
+    getPendingFunds: (
+      _parent: any,
+      _args: any,
+      { accessTokenData }: ServerContext
+    ) => getPendingFunds(FundsDomain, accessTokenData),
   },
   Mutation: {
     createUser: async (_parent: any, _args: any) =>
-      createUser(UserDomain, _args.input),
+      createUser(UserDomain, NavalCombatSocket, _args.input),
     signIn: async (_parent: any, _args: any) => signIn(UserDomain, _args.input),
     signOut: async (
       _parent: any,
@@ -75,37 +81,52 @@ export const resolvers = {
       _parent: any,
       _args: any,
       { accessTokenData }: ServerContext
-    ) => addSkin(SkinDomain, accessTokenData, _args.input, ),
+    ) => addSkin(SkinDomain, NavalCombatSocket, accessTokenData, _args.input),
     removeSkin: async (
       _parent: any,
       _args: any,
       { accessTokenData }: ServerContext
-    ) => removeSkin(SkinDomain, accessTokenData, _args.input, ),
+    ) =>
+      removeSkin(SkinDomain, NavalCombatSocket, accessTokenData, _args.input),
     buySkin: async (
       _parent: any,
       _args: any,
       { accessTokenData }: ServerContext
-    ) => buySkin(UserDomain, accessTokenData, _args.input, ),
+    ) => buySkin(UserDomain, accessTokenData, _args.input),
     updateSkin: async (
       _parent: any,
       _args: any,
       { accessTokenData }: ServerContext
-    ) => updateSkin(SkinDomain, accessTokenData, _args.input),
+    ) =>
+      updateSkin(SkinDomain, NavalCombatSocket, accessTokenData, _args.input),
     updateRoles: async (
       _parent: any,
       _args: any,
       { accessTokenData }: ServerContext
-    ) => updateRoles(UserDomain, accessTokenData, _args.input),
+    ) =>
+      updateRoles(UserDomain, NavalCombatSocket, accessTokenData, _args.input),
     approveFunds: async (
       _parent: any,
       _args: any,
       { accessTokenData }: ServerContext
-    ) => approveFunds(FundsDomain, accessTokenData, _args.input),
+    ) =>
+      approveFunds(
+        FundsDomain,
+        NavalCombatSocket,
+        accessTokenData,
+        _args.input
+      ),
     requestFunds: async (
       _parent: any,
       _args: any,
       { accessTokenData }: ServerContext
-    ) => requestFunds(FundsDomain, accessTokenData, _args.input),
+    ) =>
+      requestFunds(
+        FundsDomain,
+        NavalCombatSocket,
+        accessTokenData,
+        _args.input
+      ),
   },
   User: {
     skin: async (
@@ -113,5 +134,5 @@ export const resolvers = {
       _args: any,
       { accessTokenData }: ServerContext
     ) => getSkin(SkinDomain, UserDomain, accessTokenData),
-  }
+  },
 };

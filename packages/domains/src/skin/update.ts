@@ -1,5 +1,8 @@
 import { FileStorage } from "@naval-combat-server/ports";
+
 import { curry } from "ramda";
+
+import { Socket } from "../@types/socket";
 
 import DatabasePort, {
   ImageFiles,
@@ -43,6 +46,7 @@ const cleanOldFiles = async <
 const update = async (
   Database: typeof DatabasePort,
   SkinStorage: FileStorage,
+  Socket: Socket,
   input: Input
 ) => {
   const skin = await Database.findById(input.id);
@@ -51,8 +55,8 @@ const update = async (
     throw new Error("Skin not found");
   }
 
-  if (skin.name === "default") {
-    throw new Error("Default skin is not updatable");
+  if (skin.name === "default" && skin.name !== input.name) {
+    throw new Error("Default skin name is not updatable");
   }
 
   const updatedName = (input.name || skin.name).toLocaleLowerCase();
@@ -108,6 +112,13 @@ const update = async (
     images: updatedImages,
     cost: input.cost ?? skin.cost,
     name: updatedName,
+  });
+
+  await Socket.emit({
+    channel: "server:skin:update",
+    message: {
+      id: input.id
+    }
   });
 
   return;

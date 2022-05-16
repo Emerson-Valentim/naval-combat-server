@@ -6,6 +6,8 @@ import {
 import Server from "./src/config/server";
 import RoomHandler from "./src/handlers/room";
 import UserHandler from "./src/handlers/user";
+import FundsHandler from "./src/handlers/funds";
+import SkinHandler from "./src/handlers/skin";
 
 Server.start([
   {
@@ -18,4 +20,10 @@ Server.start([
   {
     handler: UserHandler,
   },
+  {
+    handler: SkinHandler,
+  },
+  {
+    handler: FundsHandler,
+  }
 ]);

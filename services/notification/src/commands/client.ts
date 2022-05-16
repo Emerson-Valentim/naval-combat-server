@@ -16,6 +16,10 @@ export default class Client implements Command {
 
       socket.data.userId = accessTokenData.userId;
 
+      accessTokenData.roles.forEach(role => {
+        socket.join(role);
+      });
+
       return JSON.parse(message);
     } catch (error: unknown) {
       CLogger.error({

@@ -1,20 +1,29 @@
 import { curry } from "ramda";
 
+import { Socket } from "../@types/socket";
+
 import DatabasePort, { User } from "./ports/database";
 
 type Input = {
-  user: User,
-  value: number,
-}
+  user: User;
+  value: number;
+};
 
 const addBalance = async (
   Database: typeof DatabasePort,
-  {user, value}: Input,
+  Socket: Socket,
+  { user, value }: Input
 ): Promise<void> => {
-
   await Database.update({
     id: user.id,
-    balance: user.balance + value
+    balance: user.balance + value,
+  });
+
+  await Socket.emit({
+    channel: "server:user:update",
+    message: {
+      id: user.id,
+    },
   });
 
   return;

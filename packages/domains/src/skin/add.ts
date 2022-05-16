@@ -1,6 +1,8 @@
 import { FileStorage } from "@naval-combat-server/ports";
 import { curry } from "ramda";
 
+import { Socket } from "../@types/socket";
+
 import DatabasePort, {
   ImageFiles, SkinImageSection,
   SkinSoundSection, SoundFiles
@@ -21,6 +23,7 @@ type Input = {
 const add = async (
   Database: typeof DatabasePort,
   SkinStorage: FileStorage,
+  Socket: Socket,
   input: Input
 ) => {
   const loweredCasePackageName = input.packageName.toLowerCase();
@@ -49,11 +52,18 @@ const add = async (
     }
   );
 
-  await Database.create({
+  const newSkin = await Database.create({
     name: loweredCasePackageName,
     images,
     sounds,
     cost: input.cost,
+  });
+
+  await Socket.emit({
+    channel: "server:skin:add",
+    message: {
+      id: newSkin?.id,
+    },
   });
 };
 
