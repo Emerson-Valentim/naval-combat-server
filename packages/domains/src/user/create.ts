@@ -1,6 +1,7 @@
 import Joi from "joi";
 import { curry } from "ramda";
 
+import { Socket } from "../@types/socket";
 import SkinDomain from "../skin";
 
 import UserDatabasePort, { UserInput } from "./ports/database";
@@ -20,6 +21,7 @@ const isUsernameAvailable = (incomingUsername: string, username: string) =>
 const create = async (
   Database: typeof UserDatabasePort,
   Skin: typeof SkinDomain,
+  Socket: Socket,
   input: UserInput
 ) => {
   createSchema.validate(input);
@@ -54,6 +56,13 @@ const create = async (
       current: defaultSkin.id,
       available: [defaultSkin.id],
     },
+  });
+
+  await Socket.emit({
+    channel: "server:user:create",
+    message: {
+      id: user.id
+    }
   });
 
   return user;
