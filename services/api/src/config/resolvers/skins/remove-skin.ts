@@ -2,6 +2,7 @@ import { skin as SkinDomain } from "@naval-combat-server/domains";
 import { AuthToken } from "@naval-combat-server/domains/build/src/access-token/@types/auth-token";
 import { AuthenticationError, ForbiddenError } from "apollo-server";
 
+import { NavalCombatSocket as NavalCombatSocketPort } from "../../../ports/notification";
 import { roleChecker } from "../../tools";
 
 type Input = {
@@ -10,6 +11,7 @@ type Input = {
 
 const removeSkin = async (
   skin: typeof SkinDomain,
+  NavalCombatSocket: typeof NavalCombatSocketPort,
   accessTokenData: AuthToken | undefined,
   input: Input
 ) => {
@@ -23,7 +25,7 @@ const removeSkin = async (
     throw new ForbiddenError("FORBIDDEN");
   }
 
-  await skin.remove({
+  await skin.remove(NavalCombatSocket, {
     skinId: input.skinId,
   });
 

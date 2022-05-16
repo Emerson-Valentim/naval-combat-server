@@ -9,6 +9,9 @@ const buildMock = ({ skinMock, skinUsageMock }: any = {}) => {
   return {
     SkinDatabase: buildSkinMock(skinMock),
     SkinUsageDatabase: buildSkinUsageMock(skinUsageMock),
+    Socket: {
+      emit: jest.fn(),
+    },
   };
 };
 
@@ -18,13 +21,13 @@ describe("remove()", () => {
   it("deletes skin from database", async () => {
     const skin = buildSkin();
 
-    const { SkinDatabase, SkinUsageDatabase } = buildMock({
+    const { SkinDatabase, SkinUsageDatabase, Socket } = buildMock({
       skinMock: {
         findById: jest.fn().mockResolvedValue(skin),
       },
     });
 
-    await remove(SkinDatabase, SkinUsageDatabase, {
+    await remove(SkinDatabase, SkinUsageDatabase, Socket, {
       skinId: "id",
     });
 
@@ -37,7 +40,7 @@ describe("remove()", () => {
 
   describe("provides already sold skin", () => {
     it("and fails", async () => {
-      const { SkinDatabase, SkinUsageDatabase } = buildMock({
+      const { SkinDatabase, SkinUsageDatabase, Socket } = buildMock({
         skinUsageMock: {
           list: jest.fn().mockResolvedValue([
             {
@@ -49,7 +52,7 @@ describe("remove()", () => {
       });
 
       await expect(
-        remove(SkinDatabase, SkinUsageDatabase, {
+        remove(SkinDatabase, SkinUsageDatabase, Socket, {
           skinId: "id",
         })
       ).rejects.toThrowError("There is users with skin");
@@ -58,10 +61,10 @@ describe("remove()", () => {
 
   describe("provides inexistent skin", () => {
     it("and fails", async () => {
-      const { SkinDatabase, SkinUsageDatabase } = buildMock();
+      const { SkinDatabase, SkinUsageDatabase, Socket } = buildMock();
 
       await expect(
-        remove(SkinDatabase, SkinUsageDatabase, {
+        remove(SkinDatabase, SkinUsageDatabase, Socket, {
           skinId: "id",
         })
       ).rejects.toThrowError("Skin not found");
@@ -70,7 +73,7 @@ describe("remove()", () => {
 
   describe("provides default skin", () => {
     it("and fails", async () => {
-      const { SkinDatabase, SkinUsageDatabase } = buildMock({
+      const { SkinDatabase, SkinUsageDatabase, Socket } = buildMock({
         skinMock: {
           findById: jest.fn().mockResolvedValue({
             name: "default",
@@ -79,7 +82,7 @@ describe("remove()", () => {
       });
 
       await expect(
-        remove(SkinDatabase, SkinUsageDatabase, {
+        remove(SkinDatabase, SkinUsageDatabase, Socket, {
           skinId: "id",
         })
       ).rejects.toThrowError("Default skin can not be deleted");
