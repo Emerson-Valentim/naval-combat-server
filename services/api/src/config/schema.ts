@@ -90,6 +90,10 @@ export const typeDefs = gql`
     id: String!
   }
 
+  input SelectSkinInput {
+    skinId: String!
+  }
+
   type User {
     id: ID!
     email: String!
@@ -176,6 +180,7 @@ export const typeDefs = gql`
     updateRoles(input: UpdateRolesInput!): Boolean
     requestFunds(input: RequestFundsInput!): Boolean
     approveFunds(input: ApproveFundsInput!): Boolean
+    selectSkin(input: SelectSkinInput!): Boolean
   }
 
   type Query {

@@ -30,6 +30,7 @@ import profile from "./user/profile";
 import signIn from "./user/sign-in";
 import signOut from "./user/sign-out";
 import updateRoles from "./user/update-roles";
+import selectSkin from "./user/select-skin";
 
 export const resolvers = {
   Query: {
@@ -127,6 +128,11 @@ export const resolvers = {
         accessTokenData,
         _args.input
       ),
+    selectSkin: async (
+      _parent: any,
+      _args: any,
+      { accessTokenData }: ServerContext
+    ) => selectSkin(UserDomain, accessTokenData, _args.input),
   },
   User: {
     skin: async (
