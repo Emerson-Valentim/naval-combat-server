@@ -25,5 +25,8 @@ Server.start([
   },
   {
     handler: FundsHandler,
+    dependencies: {
+      userDomain: UserDomain
+    }
   }
 ]);

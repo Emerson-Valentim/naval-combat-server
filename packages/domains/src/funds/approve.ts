@@ -47,7 +47,8 @@ const approve = async (
   await Socket.emit({
     channel: "server:funds:approve",
     message: {
-      id: fund.id
+      id: fund.id,
+      userId: fund.userId
     }
   });
 
