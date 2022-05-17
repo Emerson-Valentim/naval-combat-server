@@ -26,6 +26,12 @@ const selectSkin = async (
     throw new Error("Skin not found");
   }
 
+  const hasSkin = user.skin.available.includes(skin.id);
+
+  if(!hasSkin) {
+    throw new Error("Skin is not available for user");
+  }
+
   await Database.update({
     id: user.id,
     skin: {
