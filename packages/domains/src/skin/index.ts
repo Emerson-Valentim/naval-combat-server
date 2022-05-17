@@ -10,7 +10,7 @@ import _remove from "./remove";
 import _update from "./update";
 import _getDefault from "./get-default";
 
-const SkinFileStorage = new FileStorage("skins");
+const SkinFileStorage = new FileStorage(process.env.SKIN_BUCKET);
 
 export default {
   add: _add(SkinDatabase, SkinFileStorage),

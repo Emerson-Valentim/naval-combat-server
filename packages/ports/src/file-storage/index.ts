@@ -12,13 +12,13 @@ export default class FileStorage {
   private client: S3Client;
   private isLocal: boolean;
 
-  constructor(private bucket: "skins") {
+  constructor(private bucket: string) {
     this.isLocal = process.env.APP_ENV === "local";
 
     this.client = new S3Client({
       forcePathStyle: this.isLocal,
       region: "sa-east-1",
-      endpoint: this.isLocal ? `http://${LOCAL_ADDRESS}:4566` : "",
+      endpoint: this.isLocal ? `http://${LOCAL_ADDRESS}:4566` : undefined,
       credentials: this.isLocal
         ? {
           accessKeyId: "xxx",
