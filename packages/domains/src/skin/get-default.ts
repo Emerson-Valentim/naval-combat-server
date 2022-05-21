@@ -1,6 +1,6 @@
 import { curry } from "ramda";
 
-import DatabasePort from "./ports/skin";
+import DatabasePort, { SkinStatus } from "./ports/skin";
 
 const getDefault = async (
   Database: typeof DatabasePort,
@@ -8,7 +8,7 @@ const getDefault = async (
 ) => {
   const skin = await Database.findBy("name", "default");
 
-  if(!skin) {
+  if(!skin || skin.status !== SkinStatus.ACTIVE) {
     throw new Error("Default skin is not available");
   }
 

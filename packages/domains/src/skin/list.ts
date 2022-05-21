@@ -1,7 +1,7 @@
 import { FileStorage } from "@naval-combat-server/ports";
 import { curry } from "ramda";
 
-import DatabasePort, { ImageFiles, SoundFiles } from "./ports/skin";
+import DatabasePort, { ImageFiles, Skin, SkinStatus, SoundFiles } from "./ports/skin";
 import { authenticateFiles } from "./utils/authenticate-files";
 
 type Input = {
@@ -15,21 +15,30 @@ const list = async (
 ) => {
   const skins = await Database.list();
 
-  const signedSkins = skins.map(async (skin) => {
-    const images = await authenticateFiles<ImageFiles>(SkinStorage, skin.images);
+  const signedSkins = skins.reduce(async (arr, skin) => {
+    const resolvedArr = await arr;
 
-    const sounds = await authenticateFiles<SoundFiles>(SkinStorage, skin.sounds);
+    const isActive = skin.status === SkinStatus.ACTIVE;
 
-    return {
-      name: skin.name,
-      id: skin.id,
-      cost: skin.cost,
-      ...sounds,
-      ...images,
-    };
-  });
+    if(isActive && !!skin.images && !!skin.sounds) {
+      const images = await authenticateFiles<ImageFiles>(SkinStorage, skin.images);
 
-  const resolvedSkins = await Promise.all(signedSkins);
+      const sounds = await authenticateFiles<SoundFiles>(SkinStorage, skin.sounds);
+
+      resolvedArr.push({
+        name: skin.name,
+        id: skin.id,
+        cost: skin.cost,
+        status: skin.status,
+        ...sounds,
+        ...images,
+      });
+    }
+
+    return resolvedArr;
+  }, Promise.resolve([] as Skin[]));
+
+  const resolvedSkins = await signedSkins;
 
   return input?.ids?.length
     ? resolvedSkins.filter(({ id }) => input.ids!.includes(id))

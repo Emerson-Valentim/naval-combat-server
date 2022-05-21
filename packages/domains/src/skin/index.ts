@@ -13,7 +13,7 @@ import _getDefault from "./get-default";
 const SkinFileStorage = new FileStorage(process.env.SKIN_BUCKET!);
 
 export default {
-  add: _add(SkinDatabase, SkinFileStorage),
+  add: _add(SkinDatabase),
   list: _list(SkinDatabase, SkinFileStorage),
   get: _get(SkinDatabase, SkinFileStorage),
   getDefault: _getDefault(SkinDatabase),
