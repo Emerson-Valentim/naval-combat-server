@@ -10,11 +10,20 @@ interface UserSocketEvents {
 
 const register = (socket: Socket<UserSocketEvents>): void => {
   socket.on("client:signIn", async () => {
-    await IOHandler.handleOrigin<{ id: string; userId: string }>(
-      "client:signIn",
-      Buffer.from("{}"),
-      socket
-    );
+    try {
+      await IOHandler.handleOrigin<{ id: string; userId: string }>(
+        "client:signIn",
+        Buffer.from("{}"),
+        socket
+      );
+    } catch {
+      IOHandler.toUser(socket.id, {
+        channel: "client:request:signOut",
+        message: {
+          date: new Date().getTime(),
+        }
+      });
+    }
 
     return;
   });
