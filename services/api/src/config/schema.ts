@@ -43,14 +43,18 @@ export const typeDefs = gql`
   input AddSkinInput {
     packageName: String!
     cost: Int!
-    images: SkinImagesDefinition!
-    sounds: SkinSoundDefinition!
   }
 
   input UpdateSkinInput {
     id: ID!
     cost: Int
     name: String
+    images: SkinImagesDefinition
+    sounds: SkinSoundDefinition
+    status: SkinStatus
+  }
+
+  input InitialSetupSkinInput {
     images: SkinImagesDefinition
     sounds: SkinSoundDefinition
   }
@@ -94,6 +98,11 @@ export const typeDefs = gql`
     skinId: String!
   }
 
+  input InitialSetupInput {
+    user: CreateUserInput!
+    skin: InitialSetupSkinInput!
+  }
+
   type User {
     id: ID!
     email: String!
@@ -113,9 +122,10 @@ export const typeDefs = gql`
     id: ID!
     cost: Int!
     name: String!
-    scenario: String!
-    avatar: String!
-    voice: String!
+    scenario: String
+    avatar: String
+    voice: String
+    status: SkinStatus!
   }
 
   type UserMeta {
@@ -166,14 +176,21 @@ export const typeDefs = gql`
     CREDITED
   }
 
+  enum SkinStatus {
+    PENDING
+    ACTIVE
+    DISABLED
+  }
+
   type Mutation {
+    initialSetup(input: InitialSetupInput!): Boolean
     createUser(input: CreateUserInput!): User!
     signIn(input: SignInInput!): SignIn!
     signOut: Boolean
-    refresh(input: RefreshTokenInput!): SignIn!
+    refresh(input: RefreshTokenInput!): Tokens!
     createRoom(input: CreateRoomInput!): Room!
     joinRoom(input: JoinRoomInput!): Boolean
-    addSkin(input: AddSkinInput!): Boolean
+    addSkin(input: AddSkinInput!): Skin!
     buySkin(input: BuySkinInput!): Boolean
     removeSkin(input: RemoveSkinInput!): Boolean
     updateSkin(input: UpdateSkinInput!): Boolean
