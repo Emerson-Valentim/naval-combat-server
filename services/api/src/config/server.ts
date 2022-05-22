@@ -50,6 +50,8 @@ export default class Server {
         req: IncomingMessage;
         event: any;
       }): Promise<ServerContext> => {
+        console.log(JSON.stringify(req, null, 2));
+        console.log(JSON.stringify(event, null, 2));
         const {
           headers: { authorization: accessToken },
         } = req || event;
