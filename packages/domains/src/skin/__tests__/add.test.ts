@@ -1,7 +1,9 @@
 import {
-  buildMock as buildSkinMock, buildSkin
+  buildMock as buildSkinMock,
+  buildSkin,
 } from "../../skin/__tests__/skin-factory";
 import add from "../add";
+import { SkinStatus } from "../ports/skin";
 
 const buildMock = ({ skinMock }: any = {}) => {
   return {
@@ -11,22 +13,6 @@ const buildMock = ({ skinMock }: any = {}) => {
 
 const buildInput = (data?: any) => ({
   packageName: "package",
-  images: {
-    avatar: {
-      filename: "avatar.png",
-      base64: "base64",
-    },
-    scenario: {
-      filename: "scenario.png",
-      base64: "base64",
-    },
-  },
-  sounds: {
-    voice: {
-      filename: "voice.mp3",
-      base64: "base64",
-    },
-  },
   cost: 10,
   ...data,
 });
@@ -37,15 +23,7 @@ describe("add()", () => {
       packageName: "Package",
     });
 
-    const { Database } = buildMock({
-      skinStorageMock: {
-        add: jest
-          .fn()
-          .mockResolvedValueOnce("package/avatar.png")
-          .mockResolvedValueOnce("package/scenario.png")
-          .mockResolvedValueOnce("package/voice.mp3"),
-      },
-    });
+    const { Database } = buildMock();
 
     await add(Database, input);
 
@@ -57,22 +35,7 @@ describe("add()", () => {
     expect(Database.create).toBeCalledWith({
       name: input.packageName.toLowerCase(),
       cost: input.cost,
-      images: {
-        avatar: {
-          location: "package/avatar.png",
-          name: "avatar.png",
-        },
-        scenario: {
-          location: "package/scenario.png",
-          name: "scenario.png",
-        },
-      },
-      sounds: {
-        voice: {
-          location: "package/voice.mp3",
-          name: "voice.mp3",
-        },
-      },
+      status: SkinStatus.PENDING,
     });
   });
 
@@ -92,25 +55,6 @@ describe("add()", () => {
 
       await expect(add(Database, input)).rejects.toThrowError(
         "There is already a package with this name"
-      );
-    });
-  });
-
-  describe("provides forbidden file extension", () => {
-    it("and fail", async () => {
-      const input = buildInput({
-        images: {
-          avatar: {
-            filename: "invalid.exe",
-            base64: "base64",
-          },
-        },
-      });
-
-      const { Database } = buildMock();
-
-      await expect(add(Database, input)).rejects.toThrowError(
-        "Extension is not allowed"
       );
     });
   });

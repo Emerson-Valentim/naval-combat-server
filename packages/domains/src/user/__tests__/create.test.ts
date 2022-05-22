@@ -1,9 +1,9 @@
-import create from "../create";
-import { UserInput } from "../ports/database";
 import {
   buildMock as buildSkinMock,
-  buildSkin,
+  buildSkin
 } from "../../skin/__tests__/skin-factory";
+import create from "../create";
+import { UserInput } from "../ports/database";
 
 import { buildMock as buildUserMock } from "./user-factory";
 
@@ -19,85 +19,123 @@ const buildInput = (data?: any): UserInput => ({
   email: "email@email.com",
   password: "password",
   username: "username",
+  roles: ["user"],
   ...data,
 });
 
 beforeEach(jest.clearAllMocks);
 
-test("should call database with right parameters on creation", async () => {
-  const skin = buildSkin();
+describe("create()", () => {
+  it("calls database with right parameters on creation for common user", async () => {
+    const skin = buildSkin();
 
-  const input = buildInput();
+    const input = buildInput();
 
-  const { Database, Skin, Socket } = buildMock({
-    userMock: {
-      create: jest.fn().mockResolvedValue({ id: "user-id"}),
-    },
-    skinMock: {
-      getDefault: jest.fn().mockResolvedValue(skin),
-    },
+    const { Database, Skin, Socket } = buildMock({
+      userMock: {
+        create: jest.fn().mockResolvedValue({ id: "user-id"}),
+        list: jest.fn().mockResolvedValue([{id: "1"}])
+      },
+      skinMock: {
+        getDefault: jest.fn().mockResolvedValue(skin),
+      },
+    });
+
+    await create(Database, Skin, Socket, input);
+
+    expect(Database.create).toBeCalledWith({
+      ...input,
+      skin: {
+        available: [skin.id],
+        current: skin.id,
+      },
+    });
   });
 
-  await create(Database, Skin, Socket, input);
+  it("calls database with right parameters on creation for first user", async () => {
+    const skin = buildSkin();
 
-  expect(Database.create).toBeCalledWith({
-    ...input,
-    skin: {
-      available: [skin.id],
-      current: skin.id,
-    },
-  });
-});
+    const input = buildInput();
 
-test("should thrown an error if email already exists", async () => {
-  const input = buildInput();
+    const { Database, Skin, Socket } = buildMock({
+      userMock: {
+        create: jest.fn().mockResolvedValue({ id: "user-id"}),
+        list: jest.fn().mockResolvedValue([])
+      },
+      skinMock: {
+        getDefault: jest.fn().mockResolvedValue(skin),
+      },
+    });
 
-  const { Database, Skin, Socket } = buildMock({
-    userMock: {
-      findBy: jest.fn().mockResolvedValue({
-        email: input.email,
-        username: "different",
-        password: input.password,
-      }),
-    },
-  });
+    await create(Database, Skin, Socket, input);
 
-  await expect(create(Database, Skin, Socket, input)).rejects.toThrowError(
-    "Invalid input"
-  );
-});
-
-test("should thrown an error if username already exists", async () => {
-  const input = buildInput();
-
-  const { Database, Skin, Socket } = buildMock({
-    userMock: {
-      findBy: jest.fn().mockResolvedValue({
-        email: "different@email.com",
-        username: input.username,
-        password: input.password,
-      }),
-    },
+    expect(Database.create).toBeCalledWith({
+      ...input,
+      skin: {
+        available: [skin.id],
+        current: skin.id,
+      },
+      roles: ["user", "maintainer", "admin"]
+    });
   });
 
-  await expect(create(Database, Skin, Socket, input)).rejects.toThrowError(
-    "Username is not available"
-  );
-});
+  describe("provides email that already exists", () => {
+    it("throws an error", async () => {
+      const input = buildInput();
 
-test("should thrown an error if default skin is not registered", async () => {
-  const input = buildInput();
+      const { Database, Skin, Socket } = buildMock({
+        userMock: {
+          findBy: jest.fn().mockResolvedValue({
+            email: input.email,
+            username: "different",
+            password: input.password,
+          }),
+        },
+      });
 
-  const { Database, Skin, Socket } = buildMock({
-    userMock: {
-      create: jest.fn(),
-    },
-    skinMock: {
-      getDefault: jest.fn().mockResolvedValue(undefined),
-    },
+      await expect(create(Database, Skin, Socket, input)).rejects.toThrowError(
+        "Invalid input"
+      );
+    });
   });
 
-  await expect(create(Database, Skin, Socket, input)).rejects.toThrowError(
-    "Default skin is not registered"
-  );
+  describe("provides username that already existis", () => {
+    it("throws an error", async () => {
+      const input = buildInput();
+
+      const { Database, Skin, Socket } = buildMock({
+        userMock: {
+          findBy: jest.fn().mockResolvedValue({
+            email: "different@email.com",
+            username: input.username,
+            password: input.password,
+          }),
+        },
+      });
+
+      await expect(create(Database, Skin, Socket, input)).rejects.toThrowError(
+        "Username is not available"
+      );
+    });
+  });
+
+  describe("default skin not registered", () => {
+    test("throws an error", async () => {
+      const input = buildInput();
+
+      const { Database, Skin, Socket } = buildMock({
+        userMock: {
+          create: jest.fn(),
+        },
+        skinMock: {
+          getDefault: jest.fn().mockResolvedValue(undefined),
+        },
+      });
+
+      await expect(create(Database, Skin, Socket, input)).rejects.toThrowError(
+        "Default skin is not registered"
+      );
+    });
+  });
+
 });

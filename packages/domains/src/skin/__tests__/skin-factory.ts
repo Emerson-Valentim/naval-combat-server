@@ -1,4 +1,4 @@
-import { Skin } from "../ports/skin";
+import { Skin, SkinStatus } from "../ports/skin";
 
 export const buildMock = (skinFactory?: any) => {
   const mock = {
@@ -32,6 +32,7 @@ export const buildSkin = (data?: any): Skin => {
     id: "id",
     name: "name",
     cost: 10,
+    status: SkinStatus.ACTIVE,
     images: {
       scenario: {
         name: "name.png",
