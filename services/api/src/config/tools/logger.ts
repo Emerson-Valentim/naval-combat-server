@@ -1,3 +1,5 @@
+import crypto from "crypto";
+
 import { ServerContext } from "../server";
 import { CLogger } from "../../ports/logger";
 
@@ -18,11 +20,9 @@ export default {
     context: ServerContext;
   }) {
     const startedAt = new Date().toISOString();
+    const requestId = crypto.randomUUID();
 
-    CLogger.maskedLog(
-      { request, startedAt, context, level: "info" },
-      keysToMask
-    );
+    CLogger.maskedLog({ request, startedAt, context, requestId }, keysToMask);
     return {
       async willSendResponse({ response }: { response: any }) {
         const finishedAt = new Date().toISOString();
@@ -34,6 +34,7 @@ export default {
             context,
             finishedAt,
             startedAt,
+            requestId,
           },
           keysToMask
         );
