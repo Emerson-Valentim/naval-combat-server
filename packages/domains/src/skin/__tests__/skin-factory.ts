@@ -23,6 +23,7 @@ export const buildSkinStorageMock = (skinStorageMock?: any) => {
   return {
     add: jest.fn(),
     get: jest.fn(),
+    remove: jest.fn(),
     ...skinStorageMock,
   };
 };
@@ -36,17 +37,17 @@ export const buildSkin = (data?: any): Skin => {
     images: {
       scenario: {
         name: "name.png",
-        location: "location"
+        location: "location-scenario"
       },
       avatar: {
         name: "name.png",
-        location: "location"
+        location: "location-avatar"
       }
     },
     sounds: {
       voice: {
         name: "voice.mp3",
-        location: "location"
+        location: "location-voice"
       }
     },
     ...data,

@@ -27,12 +27,12 @@ describe("list()", () => {
     expect(Database.list).toBeCalled();
 
     expect(SkinStorage.get).toHaveBeenNthCalledWith(1, {
-      location: "location",
+      location: "location-scenario",
       contentType: "image/png",
     });
 
     expect(SkinStorage.get).toHaveBeenNthCalledWith(2, {
-      location: "location",
+      location: "location-avatar",
       contentType: "image/png",
     });
   });
