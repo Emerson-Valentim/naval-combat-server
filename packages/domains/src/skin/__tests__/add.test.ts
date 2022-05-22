@@ -1,17 +1,11 @@
 import {
-  buildMock as buildSkinMock,
-  buildSkinStorageMock,
-  buildSkin,
+  buildMock as buildSkinMock, buildSkin
 } from "../../skin/__tests__/skin-factory";
 import add from "../add";
 
-const buildMock = ({ skinMock, skinStorageMock }: any = {}) => {
+const buildMock = ({ skinMock }: any = {}) => {
   return {
     Database: buildSkinMock(skinMock),
-    SkinStorage: buildSkinStorageMock(skinStorageMock),
-    Socket: {
-      emit: jest.fn()
-    }
   };
 };
 
@@ -43,7 +37,7 @@ describe("add()", () => {
       packageName: "Package",
     });
 
-    const { Database, SkinStorage, Socket } = buildMock({
+    const { Database } = buildMock({
       skinStorageMock: {
         add: jest
           .fn()
@@ -53,30 +47,12 @@ describe("add()", () => {
       },
     });
 
-    await add(Database, SkinStorage, Socket, input);
+    await add(Database, input);
 
     expect(Database.findBy).toBeCalledWith(
       "name",
       input.packageName.toLowerCase()
     );
-
-    expect(SkinStorage.add).toHaveBeenNthCalledWith(1, {
-      location: "package/avatar.png",
-      base64: "base64",
-      contentType: "image/png",
-    });
-
-    expect(SkinStorage.add).toHaveBeenNthCalledWith(2, {
-      location: "package/scenario.png",
-      base64: "base64",
-      contentType: "image/png",
-    });
-
-    expect(SkinStorage.add).toHaveBeenNthCalledWith(3, {
-      location: "package/voice.mp3",
-      base64: "base64",
-      contentType: "audio/mp3",
-    });
 
     expect(Database.create).toBeCalledWith({
       name: input.packageName.toLowerCase(),
@@ -104,7 +80,7 @@ describe("add()", () => {
     it("and fail", async () => {
       const input = buildInput();
 
-      const { Database, SkinStorage, Socket } = buildMock({
+      const { Database } = buildMock({
         skinMock: {
           findBy: jest.fn().mockResolvedValue(
             buildSkin({
@@ -114,7 +90,7 @@ describe("add()", () => {
         },
       });
 
-      await expect(add(Database, SkinStorage, Socket, input)).rejects.toThrowError(
+      await expect(add(Database, input)).rejects.toThrowError(
         "There is already a package with this name"
       );
     });
@@ -131,9 +107,9 @@ describe("add()", () => {
         },
       });
 
-      const { Database, SkinStorage, Socket } = buildMock();
+      const { Database } = buildMock();
 
-      await expect(add(Database, SkinStorage, Socket, input)).rejects.toThrowError(
+      await expect(add(Database, input)).rejects.toThrowError(
         "Extension is not allowed"
       );
     });
