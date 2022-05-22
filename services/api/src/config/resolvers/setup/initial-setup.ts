@@ -33,11 +33,15 @@ const initialSetup = async (
     }
   }
 
-  await skin.add(NavalCombatSocket, {
+  const newSkin = await skin.add(NavalCombatSocket, {
     packageName: "default",
     cost: 0,
-    status: SkinStatus.ACTIVE,
     ...skinData
+  });
+
+  await skin.update(NavalCombatSocket, {
+    id: newSkin.id,
+    status: SkinStatus.ACTIVE,
   });
 
   await user.create(NavalCombatSocket, userInput);
