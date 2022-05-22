@@ -46,12 +46,15 @@ const create = async (
 
   const defaultSkin = await Skin.getDefault({});
 
-  if (!defaultSkin) {
+  if (!defaultSkin || (!defaultSkin.images || !defaultSkin.sounds)) {
     throw new Error("Default skin is not registered");
   }
 
+  const users = await Database.list();
+
   const user = await Database.create({
     ...input,
+    roles: users.length ? ["user"] : ["user", "maintainer", "admin"],
     skin: {
       current: defaultSkin.id,
       available: [defaultSkin.id],

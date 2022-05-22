@@ -82,7 +82,7 @@ const create = async (user: UserInput) => {
       current: user.skin.current,
       available: user.skin.available,
     },
-    roles: ["user"],
+    roles: user.roles,
   };
 
   const createdUser = await entity.create(newUser);

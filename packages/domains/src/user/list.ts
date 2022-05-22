@@ -9,7 +9,7 @@ type Input = {
 const list = async (
   Database: typeof DatabasePort,
   _input?: Input
-): Promise<Omit<User, "password">> => {
+): Promise<Omit<User, "password">[]> => {
 
   const users = await Database.list();
 
