@@ -50,7 +50,7 @@ export interface SoundFiles {
   [SkinSoundSection.VOICE_YES]: File;
 }
 
-export type SkinInput = Omit<Skin, "id" | "images" | "sounds">;
+export type SkinInput = Omit<Skin, "id">;
 
 const SkinSchema = {
   name: String,

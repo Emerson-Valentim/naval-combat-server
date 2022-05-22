@@ -85,7 +85,7 @@ export const resolvers = {
       _parent: any,
       _args: any,
       { accessTokenData }: ServerContext
-    ) => addSkin(SkinDomain, accessTokenData, _args.input),
+    ) => addSkin(SkinDomain, NavalCombatSocket, accessTokenData, _args.input),
     removeSkin: async (
       _parent: any,
       _args: any,

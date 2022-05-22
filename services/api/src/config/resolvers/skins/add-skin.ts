@@ -1,7 +1,10 @@
 import { skin as SkinDomain } from "@naval-combat-server/domains";
 import { AuthToken } from "@naval-combat-server/domains/build/src/access-token/@types/auth-token";
+import { SkinImageSection, SkinSoundSection } from "@naval-combat-server/domains/build/src/skin/ports/skin";
+import { IncomingFile } from "@naval-combat-server/domains/build/src/skin/utils/save-files";
 import { AuthenticationError, ForbiddenError } from "apollo-server";
 
+import { NavalCombatSocket as NavalCombatSocketPort } from "../../../ports/notification";
 import { roleChecker } from "../../tools";
 
 export type File = {
@@ -13,27 +16,19 @@ type Input = {
   packageName: string;
   cost: number;
   images: {
-    scenario: File;
-    avatar: File;
+    [key in SkinImageSection]: IncomingFile;
   };
   sounds: {
-    voice: File;
+    [key in SkinSoundSection]: IncomingFile;
   };
 };
 
 const addSkin = async (
   skin: typeof SkinDomain,
+  NavalCombatSocket: typeof NavalCombatSocketPort,
   accessTokenData: AuthToken | undefined,
   input: Input
 ) => {
-  const skins = await skin.list({});
-
-  if (!skins.length && input.packageName === "default") {
-    const newSkin = await skin.add(input);
-
-    return newSkin;
-  }
-
   if (!accessTokenData) {
     throw new AuthenticationError("UNAUTHORIZED");
   }
@@ -44,7 +39,7 @@ const addSkin = async (
     throw new ForbiddenError("FORBIDDEN");
   }
 
-  const newSkin = await skin.add(input);
+  const newSkin = await skin.add(NavalCombatSocket, input);
 
   return newSkin;
 };
