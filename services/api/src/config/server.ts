@@ -1,5 +1,7 @@
 import { IncomingMessage } from "http";
 
+import express from "express";
+
 import { ApolloServer as LocalApolloServer, Config } from "apollo-server";
 import { ApolloServer as LambdaApolloServer } from "apollo-server-lambda";
 
@@ -31,6 +33,11 @@ export default class Server {
       ...Server.generateConfig(),
       // @ts-expect-error type is not defined correctly
       cors: true,
+    });
+
+    lambdaServer.applyMiddleware({
+      app: express(),
+      bodyParserConfig: { limit: "50mb" },
     });
 
     return lambdaServer.createHandler();
