@@ -30,7 +30,7 @@ export default class Server {
     const lambdaServer = new LambdaApolloServer({
       ...Server.generateConfig(),
       // @ts-expect-error type is not defined correctly
-      cors: true
+      cors: true,
     });
 
     return lambdaServer.createHandler();
@@ -50,11 +50,18 @@ export default class Server {
         req: IncomingMessage;
         event: any;
       }): Promise<ServerContext> => {
-        console.log(JSON.stringify(req, null, 2));
-        console.log(JSON.stringify(event, null, 2));
         const {
-          headers: { authorization: accessToken },
+          headers: {
+            Authorization: upperCaseAuthorization,
+            authorization: lowerCaseAuthorization,
+          },
         } = req || event;
+
+        const accessToken =
+          lowerCaseAuthorization ??
+          (typeof upperCaseAuthorization === "string"
+            ? upperCaseAuthorization
+            : upperCaseAuthorization?.at(0));
 
         const authentication = accessToken
           ? await authenticator(accessToken)
