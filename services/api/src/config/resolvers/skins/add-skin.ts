@@ -2,7 +2,6 @@ import { skin as SkinDomain } from "@naval-combat-server/domains";
 import { AuthToken } from "@naval-combat-server/domains/build/src/access-token/@types/auth-token";
 import { AuthenticationError, ForbiddenError } from "apollo-server";
 
-import { NavalCombatSocket as NavalCombatSocketPort } from "../../../ports/notification";
 import { roleChecker } from "../../tools";
 
 export type File = {
@@ -24,16 +23,15 @@ type Input = {
 
 const addSkin = async (
   skin: typeof SkinDomain,
-  NavalCombatSocket: typeof NavalCombatSocketPort,
   accessTokenData: AuthToken | undefined,
   input: Input
 ) => {
   const skins = await skin.list({});
 
   if (!skins.length && input.packageName === "default") {
-    await skin.add(NavalCombatSocket, input);
+    const newSkin = await skin.add(input);
 
-    return true;
+    return newSkin;
   }
 
   if (!accessTokenData) {
@@ -46,9 +44,9 @@ const addSkin = async (
     throw new ForbiddenError("FORBIDDEN");
   }
 
-  await skin.add(NavalCombatSocket, input);
+  const newSkin = await skin.add(input);
 
-  return true;
+  return newSkin;
 };
 
 export default addSkin;
