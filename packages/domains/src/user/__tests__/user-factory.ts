@@ -26,6 +26,7 @@ export const buildUser = (data?: any): User => {
     },
     password: "password",
     username: "username",
+    roles: ["user"],
     balance: 100,
     ...data,
   };
