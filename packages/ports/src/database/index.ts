@@ -19,6 +19,10 @@ export default class Database {
 
     const schema = new Schema(_schema);
 
+    schema.set('toJSON', {
+      virtuals: true
+    });
+
     return mongoose.model(_model, schema);
   }
 
