@@ -100,7 +100,6 @@ export const typeDefs = gql`
 
   input InitialSetupInput {
     user: CreateUserInput!
-    skin: InitialSetupSkinInput!
   }
 
   type User {
