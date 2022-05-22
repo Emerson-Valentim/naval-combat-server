@@ -28,7 +28,7 @@ export default class Server {
     });
   }
 
-  public static lambda() {
+  public static async lambda() {
     const lambdaServer = new LambdaApolloServer({
       ...Server.generateConfig(),
       // @ts-expect-error type is not defined correctly
@@ -39,6 +39,8 @@ export default class Server {
       app: express(),
       bodyParserConfig: { limit: "50mb" },
     });
+
+    await lambdaServer.start();
 
     return lambdaServer.createHandler();
   }
