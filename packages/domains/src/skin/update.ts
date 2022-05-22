@@ -8,12 +8,14 @@ import DatabasePort, {
   ImageFiles,
   SkinImageSection,
   SkinSoundSection,
+  SkinStatus,
   SoundFiles,
 } from "./ports/skin";
 import { IncomingFile, saveFiles } from "./utils/save-files";
 
 type Input = {
   id: string;
+  status?: SkinStatus;
   name?: string;
   cost?: number;
   images?: {
@@ -30,9 +32,13 @@ const cleanOldFiles = async <
   SkinStorage: FileStorage,
   { currentFiles, previousFiles }: { currentFiles: T; previousFiles: T }
 ) => {
-  const currentKeys = Object.values(currentFiles).map(({ location }) => location);
+  const currentKeys = Object.values(currentFiles).map(
+    ({ location }) => location
+  );
 
-  const previousKeys = Object.values(previousFiles).map(({ location }) => location);
+  const previousKeys = Object.values(previousFiles).map(
+    ({ location }) => location
+  );
 
   const promises = previousKeys.map(async (location) => {
     if (!currentKeys.includes(location)) {
@@ -55,7 +61,7 @@ const update = async (
     throw new Error("Skin not found");
   }
 
-  if (skin.name === "default" && skin.name !== input.name) {
+  if (skin.name === "default" && input.name && skin.name !== input.name) {
     throw new Error("Default skin name is not updatable");
   }
 
@@ -79,10 +85,12 @@ const update = async (
       ...sounds,
     };
 
-    await cleanOldFiles(SkinStorage, {
-      currentFiles: updatedSounds,
-      previousFiles: skin.sounds,
-    });
+    if (skin.sounds) {
+      await cleanOldFiles(SkinStorage, {
+        currentFiles: updatedSounds,
+        previousFiles: skin.sounds,
+      });
+    }
   }
 
   if (input.images) {
@@ -100,26 +108,35 @@ const update = async (
       ...images,
     };
 
-    await cleanOldFiles(SkinStorage, {
-      currentFiles: updatedImages,
-      previousFiles: skin.images,
-    });
+    if (skin.images) {
+      await cleanOldFiles(SkinStorage, {
+        currentFiles: updatedImages,
+        previousFiles: skin.images,
+      });
+    }
   }
+
+  const currentCost = input.cost ?? skin.cost;
+
+  const currentStatus = input.status ?? skin.status;
 
   await Database.update({
     id: input.id,
     sounds: updatedSounds,
     images: updatedImages,
-    cost: input.cost ?? skin.cost,
+    cost: currentCost,
     name: updatedName,
+    status: currentStatus,
   });
 
-  await Socket.emit({
-    channel: "server:skin:update",
-    message: {
-      id: input.id
-    }
-  });
+  if (currentStatus === SkinStatus.ACTIVE) {
+    await Socket.emit({
+      channel: "server:skin:update",
+      message: {
+        id: input.id,
+      },
+    });
+  }
 
   return;
 };

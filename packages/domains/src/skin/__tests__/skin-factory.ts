@@ -1,4 +1,4 @@
-import { Skin } from "../ports/skin";
+import { Skin, SkinStatus } from "../ports/skin";
 
 export const buildMock = (skinFactory?: any) => {
   const mock = {
@@ -23,6 +23,7 @@ export const buildSkinStorageMock = (skinStorageMock?: any) => {
   return {
     add: jest.fn(),
     get: jest.fn(),
+    remove: jest.fn(),
     ...skinStorageMock,
   };
 };
@@ -32,20 +33,21 @@ export const buildSkin = (data?: any): Skin => {
     id: "id",
     name: "name",
     cost: 10,
+    status: SkinStatus.ACTIVE,
     images: {
       scenario: {
         name: "name.png",
-        location: "location"
+        location: "location-scenario"
       },
       avatar: {
         name: "name.png",
-        location: "location"
+        location: "location-avatar"
       }
     },
     sounds: {
       voice: {
         name: "voice.mp3",
-        location: "location"
+        location: "location-voice"
       }
     },
     ...data,

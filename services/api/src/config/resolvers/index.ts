@@ -31,6 +31,7 @@ import signIn from "./user/sign-in";
 import signOut from "./user/sign-out";
 import updateRoles from "./user/update-roles";
 import selectSkin from "./user/select-skin";
+import initialSetup from "./setup/initial-setup";
 
 export const resolvers = {
   Query: {
@@ -57,6 +58,8 @@ export const resolvers = {
     ) => getPendingFunds(FundsDomain, accessTokenData),
   },
   Mutation: {
+    initialSetup: async (_parent: any, _args: any) =>
+      initialSetup(UserDomain, SkinDomain, NavalCombatSocket, _args.input),
     createUser: async (_parent: any, _args: any) =>
       createUser(UserDomain, NavalCombatSocket, _args.input),
     signIn: async (_parent: any, _args: any) => signIn(UserDomain, _args.input),
@@ -82,7 +85,7 @@ export const resolvers = {
       _parent: any,
       _args: any,
       { accessTokenData }: ServerContext
-    ) => addSkin(SkinDomain, NavalCombatSocket, accessTokenData, _args.input),
+    ) => addSkin(SkinDomain, accessTokenData, _args.input),
     removeSkin: async (
       _parent: any,
       _args: any,

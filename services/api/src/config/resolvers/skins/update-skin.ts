@@ -1,5 +1,6 @@
 import { skin as SkinDomain } from "@naval-combat-server/domains";
 import { AuthToken } from "@naval-combat-server/domains/build/src/access-token/@types/auth-token";
+import { SkinStatus } from "@naval-combat-server/domains/build/src/skin/ports/skin";
 import { AuthenticationError, ForbiddenError } from "apollo-server";
 
 import { NavalCombatSocket as NavalCombatSocketPort } from "../../../ports/notification";
@@ -18,6 +19,7 @@ type Input = {
   sounds?: {
     voice: File;
   };
+  status?: SkinStatus
 };
 
 const updateSkin = async (

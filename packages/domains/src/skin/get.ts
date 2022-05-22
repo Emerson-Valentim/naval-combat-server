@@ -15,6 +15,10 @@ const get = async (
     throw new Error("Skin not found");
   }
 
+  if(!skin.images || !skin.sounds) {
+    return skin;
+  }
+
   const images = await authenticateFiles<ImageFiles>(SkinStorage, skin.images);
 
   const sounds = await authenticateFiles<SoundFiles>(SkinStorage, skin.sounds);

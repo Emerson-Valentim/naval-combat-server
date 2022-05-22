@@ -20,6 +20,10 @@ const request = async (
 ) => {
   const user = await User.get(input.userId, "id");
 
+  if(input.value <= 0) {
+    throw new Error("Funds can only be positive number");
+  }
+
   const fund = await Database.create({
     createdAt: DateTime.now().toMillis(),
     updatedAt: DateTime.now().toMillis(),

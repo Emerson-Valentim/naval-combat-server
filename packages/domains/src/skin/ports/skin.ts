@@ -3,9 +3,16 @@ import { Database } from "@naval-combat-server/ports";
 export interface Skin {
   id: string;
   name: string;
-  images: ImageFiles;
-  sounds: SoundFiles;
+  images?: ImageFiles;
+  sounds?: SoundFiles;
   cost: number;
+  status: SkinStatus;
+}
+
+export enum SkinStatus {
+  DISABLED = "DISABLED",
+  PENDING = "PENDING",
+  ACTIVE = "ACTIVE",
 }
 
 export interface File {
@@ -31,27 +38,36 @@ export interface SoundFiles {
   [SkinSoundSection.VOICE]: File;
 }
 
-export type SkinInput = Omit<Skin, "id">;
+export type SkinInput = Omit<Skin, "id" | "images" | "sounds">;
 
 const SkinSchema = {
   name: String,
   images: {
-    scenario: {
-      name: String,
-      location: String,
-    },
-    avatar: {
-      name: String,
-      location: String,
+    required: false,
+    _id: false,
+    type: {
+      scenario: {
+        name: String,
+        location: String,
+      },
+      avatar: {
+        name: String,
+        location: String,
+      },
     },
   },
   sounds: {
-    voice: {
-      name: String,
-      location: String,
+    required: false,
+    _id: false,
+    type: {
+      voice: {
+        name: String,
+        location: String,
+      },
     },
   },
   cost: Number,
+  status: String,
 };
 
 const Skin = new Database(process.env.MONGODB_ADDRESS!);
@@ -65,7 +81,7 @@ const getEntity = async () => {
 const create = async (input: SkinInput): Promise<Skin> => {
   const entity = await getEntity();
 
-  const createdSkin: Skin = await entity.create(input);
+  const createdSkin = await entity.create(input);
 
   return createdSkin;
 };
@@ -73,7 +89,7 @@ const create = async (input: SkinInput): Promise<Skin> => {
 const update = async ({
   id,
   ...input
-}: Partial<Pick<Skin, "images" | "name" | "sounds" | "cost">> & {
+}: Partial<Pick<Skin, "images" | "name" | "sounds" | "cost" | "status">> & {
   id: string;
 }): Promise<Skin> => {
   const entity = await getEntity();
@@ -88,19 +104,25 @@ const update = async ({
 const list = async (): Promise<Skin[]> => {
   const entity = await getEntity();
 
-  return entity.find();
+  const items = await entity.find();
+
+  return items?.map(item => item?.toJSON());
 };
 
 const findBy = async (field: "name", value: string): Promise<Skin | null> => {
   const entity = await getEntity();
 
-  return entity.findOne({ [field]: value });
+  const item = await entity.findOne({ [field]: value });
+
+  return item?.toJSON();
 };
 
 const findById = async (id: string): Promise<Skin | null> => {
   const entity = await getEntity();
 
-  return entity.findById(id);
+  const item = await entity.findById(id);
+
+  return item?.toJSON();
 };
 
 const remove = async (skinId: string): Promise<void> => {
