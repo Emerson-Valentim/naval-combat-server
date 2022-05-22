@@ -6,7 +6,7 @@ import { ApolloServer as LambdaApolloServer } from "apollo-server-lambda";
 import { AuthToken } from "@naval-combat-server/domains/build/src/access-token/@types/auth-token";
 
 import { typeDefs } from "./schema";
-import { authenticator } from "./tools/index";
+import { authenticator, logger } from "./tools/index";
 import { resolvers } from "./resolvers/index";
 
 export interface ServerContext {
@@ -40,6 +40,7 @@ export default class Server {
   LocalApolloServer | LambdaApolloServer
   > {
     return {
+      plugins: [logger],
       typeDefs: Server.typeDefs,
       resolvers: Server.resolvers,
       context: async ({
