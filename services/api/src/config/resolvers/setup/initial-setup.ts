@@ -33,13 +33,9 @@ const initialSetup = async (
     }
   }
 
-  const newSkin = await skin.add({
+  await skin.add(NavalCombatSocket, {
     packageName: "default",
     cost: 0,
-  });
-
-  await skin.update(NavalCombatSocket, {
-    id: newSkin.id,
     status: SkinStatus.ACTIVE,
     ...skinData
   });
