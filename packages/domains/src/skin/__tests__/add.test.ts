@@ -4,6 +4,7 @@ import {
   buildSkin,
 } from "../../skin/__tests__/skin-factory";
 import add from "../add";
+import { SkinStatus } from "../ports/skin";
 
 const buildMock = ({ skinMock, skinStorageMock }: any = {}) => {
   return {
@@ -81,6 +82,7 @@ describe("add()", () => {
     expect(Database.create).toBeCalledWith({
       name: input.packageName.toLowerCase(),
       cost: input.cost,
+      status: SkinStatus.PENDING,
       images: {
         avatar: {
           location: "package/avatar.png",
