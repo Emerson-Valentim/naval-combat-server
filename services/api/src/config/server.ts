@@ -28,21 +28,22 @@ export default class Server {
     });
   }
 
-  public static async lambda() {
+  public static lambda() {
     const lambdaServer = new LambdaApolloServer({
       ...Server.generateConfig(),
       // @ts-expect-error type is not defined correctly
       cors: true,
     });
 
-    lambdaServer.applyMiddleware({
-      app: express(),
-      bodyParserConfig: { limit: "50mb" },
+    return lambdaServer.createHandler({
+      expressAppFromMiddleware() {
+        const app = express();
+
+        app.use(express.json({ limit: "50mb"}));
+
+        return app;
+      }
     });
-
-    await lambdaServer.start();
-
-    return lambdaServer.createHandler();
   }
 
   protected static generateConfig(): Config<
