@@ -23,19 +23,31 @@ export interface File {
 export enum SkinImageSection {
   SCENARIO = "scenario",
   AVATAR = "avatar",
+  SHIP_1 = "ship1",
+  SHIP_2 = "ship2",
+  SHIP_3 = "ship3",
+  SHIP_4 = "ship4",
+  SHIP_5 = "ship5",
 }
 
 export enum SkinSoundSection {
-  VOICE = "voice",
+  VOICE_YES = "voiceYes",
+  VOICE_NO = "voiceNo",
 }
 
 export interface ImageFiles {
   [SkinImageSection.AVATAR]: File;
   [SkinImageSection.SCENARIO]: File;
+  [SkinImageSection.SHIP_1]: File;
+  [SkinImageSection.SHIP_2]: File;
+  [SkinImageSection.SHIP_3]: File;
+  [SkinImageSection.SHIP_4]: File;
+  [SkinImageSection.SHIP_5]: File;
 }
 
 export interface SoundFiles {
-  [SkinSoundSection.VOICE]: File;
+  [SkinSoundSection.VOICE_NO]: File;
+  [SkinSoundSection.VOICE_YES]: File;
 }
 
 export type SkinInput = Omit<Skin, "id" | "images" | "sounds">;
@@ -54,13 +66,37 @@ const SkinSchema = {
         name: String,
         location: String,
       },
+      ship1: {
+        name: String,
+        location: String,
+      },
+      ship2: {
+        name: String,
+        location: String,
+      },
+      ship3: {
+        name: String,
+        location: String,
+      },
+      ship4: {
+        name: String,
+        location: String,
+      },
+      ship5: {
+        name: String,
+        location: String,
+      }
     },
   },
   sounds: {
     required: false,
     _id: false,
     type: {
-      voice: {
+      voiceYes: {
+        name: String,
+        location: String,
+      },
+      voiceNo: {
         name: String,
         location: String,
       },

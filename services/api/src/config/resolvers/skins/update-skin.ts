@@ -1,23 +1,21 @@
 import { skin as SkinDomain } from "@naval-combat-server/domains";
 import { AuthToken } from "@naval-combat-server/domains/build/src/access-token/@types/auth-token";
-import { SkinStatus } from "@naval-combat-server/domains/build/src/skin/ports/skin";
+import { SkinImageSection, SkinSoundSection, SkinStatus } from "@naval-combat-server/domains/build/src/skin/ports/skin";
+import { IncomingFile } from "@naval-combat-server/domains/build/src/skin/utils/save-files";
 import { AuthenticationError, ForbiddenError } from "apollo-server";
 
 import { NavalCombatSocket as NavalCombatSocketPort } from "../../../ports/notification";
 import { roleChecker } from "../../tools";
-
-import { File } from "./add-skin";
 
 type Input = {
   id: string;
   name?: string;
   cost?: number;
   images?: {
-    scenario: File;
-    avatar: File;
+    [key in SkinImageSection]?: IncomingFile;
   };
   sounds?: {
-    voice: File;
+    [key in SkinSoundSection]?: IncomingFile;
   };
   status?: SkinStatus
 };

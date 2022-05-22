@@ -54,11 +54,6 @@ export const typeDefs = gql`
     status: SkinStatus
   }
 
-  input InitialSetupSkinInput {
-    images: SkinImagesDefinition
-    sounds: SkinSoundDefinition
-  }
-
   input File {
     filename: String!
     base64: String!
@@ -75,10 +70,16 @@ export const typeDefs = gql`
   input SkinImagesDefinition {
     scenario: File
     avatar: File
+    ship1: File
+    ship2: File
+    ship3: File
+    ship4: File
+    ship5: File
   }
 
   input SkinSoundDefinition {
-    voice: File
+    voiceYes: File
+    voiceNo: File
   }
 
   input UpdateRolesInput {
@@ -123,7 +124,13 @@ export const typeDefs = gql`
     name: String!
     scenario: String
     avatar: String
-    voice: String
+    ship1: String
+    ship2: String
+    ship3: String
+    ship4: String
+    ship5: String
+    voiceNo: String
+    voiceYes: String
     status: SkinStatus!
   }
 
