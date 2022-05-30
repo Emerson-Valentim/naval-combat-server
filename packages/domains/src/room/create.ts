@@ -1,6 +1,7 @@
 import { curry } from "ramda";
 
 import { Socket } from "../@types/socket";
+import BoardDomain from "../board";
 
 import DatabasePort, { RoomStatus, RoomType } from "./ports/database";
 
@@ -13,6 +14,7 @@ type Input = {
 
 const create = async (
   Database: typeof DatabasePort,
+  Board: typeof BoardDomain,
   Socket: Socket,
   { userId, ...input }: Input
 ) => {
@@ -40,11 +42,17 @@ const create = async (
 
   const createdRoom = await Database.create(room);
 
+  await Board.create({
+    size: 10,
+    roomId: createdRoom.id,
+    currentPlayer: userId,
+  });
+
   await Socket.emit({
     channel: "server:create:room",
     message: {
       id: createdRoom?.id,
-      userId
+      userId,
     },
   });
 

@@ -1,3 +1,4 @@
+import { buildMock as buildBoardMock } from "../../board/__tests__/board-factory";
 import create from "../create";
 import { RoomStatus, RoomType } from "../ports/database";
 
@@ -9,6 +10,7 @@ const buildMock = ({ database, socket }: any = {}) => {
     Socket: {
       emit: socket?.emit || jest.fn(),
     },
+    Board: buildBoardMock(),
   };
 };
 
@@ -25,13 +27,13 @@ test("should update existing rooms status to DELETED", async () => {
 
   const rooms = [buildRoom(), buildRoom(), buildRoom()];
 
-  const { Database, Socket } = buildMock({
+  const { Database, Board, Socket } = buildMock({
     database: {
       findBy: jest.fn().mockResolvedValue(rooms),
     },
   });
 
-  await create(Database, Socket, input);
+  await create(Database, Board, Socket, input);
 
   expect(Database.findBy).toBeCalledWith({
     owner: input.userId,
@@ -51,13 +53,13 @@ test("should update existing rooms status to DELETED", async () => {
 test("should create a new room", async () => {
   const { userId: _, ...input } = buildInput();
 
-  const { Database, Socket } = buildMock({
+  const { Database, Board, Socket } = buildMock({
     database: {
       findBy: jest.fn().mockResolvedValue([]),
     },
   });
 
-  await create(Database, Socket, input);
+  await create(Database, Board, Socket, input);
 
   expect(Database.create).toBeCalledWith({
     owner: input.userId,
@@ -70,23 +72,23 @@ test("should call socket emit after create room", async () => {
   const input = buildInput();
 
   const room = buildRoom({
-    ...input
+    ...input,
   });
 
-  const { Database, Socket } = buildMock({
+  const { Database, Board, Socket } = buildMock({
     database: {
       findBy: jest.fn().mockResolvedValue([]),
-      create: jest.fn().mockResolvedValue(room)
+      create: jest.fn().mockResolvedValue(room),
     },
   });
 
-  await create(Database, Socket, input);
+  await create(Database, Board, Socket, input);
 
   expect(Socket.emit).toBeCalledWith({
     channel: "server:create:room",
     message: {
       id: room.id,
-      userId: input.userId
-    }
+      userId: input.userId,
+    },
   });
 });

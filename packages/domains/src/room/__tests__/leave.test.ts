@@ -1,3 +1,4 @@
+import { buildMock as buildBoardMock } from "../../board/__tests__/board-factory";
 import leave from "../leave";
 import { RoomStatus } from "../ports/database";
 
@@ -6,16 +7,17 @@ import { buildMock as buildRoomMock, buildRoom } from "./room-factory";
 const buildMock = ({ database }: any = {}) => {
   return {
     Database: buildRoomMock(database),
+    Board: buildBoardMock()
   };
 };
 
 beforeEach(jest.clearAllMocks);
 
 test("should throw an error because room does not exist", async () => {
-  const { Database } = buildMock();
+  const { Database, Board } = buildMock();
 
   await expect(
-    leave(Database, {
+    leave(Database, Board, {
       roomId: "room-id",
       userId: "user-id",
     })
@@ -25,13 +27,13 @@ test("should throw an error because room does not exist", async () => {
 });
 
 test("should not update room if user id is not a player", async () => {
-  const { Database } = buildMock({
+  const { Database, Board } = buildMock({
     database: {
       findById: jest.fn().mockResolvedValue(buildRoom()),
     },
   });
 
-  await leave(Database, {
+  await leave(Database, Board, {
     roomId: "room-id",
     userId: "user-id2",
   });
@@ -51,13 +53,13 @@ test("should DELETE room because players list is empty", async () => {
     userId: "user-id",
   };
 
-  const { Database } = buildMock({
+  const { Database, Board } = buildMock({
     database: {
       findById: jest.fn().mockResolvedValue(room),
     },
   });
 
-  await leave(Database, input);
+  await leave(Database, Board, input);
 
   expect(Database.update).toBeCalledWith({
     id: input.roomId,
@@ -78,13 +80,13 @@ test("should UPDATE room's owner because it left", async () => {
     userId: "user-id",
   };
 
-  const { Database } = buildMock({
+  const { Database, Board } = buildMock({
     database: {
       findById: jest.fn().mockResolvedValue(room),
     },
   });
 
-  await leave(Database, input);
+  await leave(Database, Board, input);
 
   expect(Database.update).toBeCalledWith({
     id: input.roomId,

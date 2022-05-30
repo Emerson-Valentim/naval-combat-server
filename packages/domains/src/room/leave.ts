@@ -1,5 +1,7 @@
 import { curry } from "ramda";
 
+import BoardDomain from "../board";
+
 import DatabasePort, { RoomStatus } from "./ports/database";
 
 type Input = {
@@ -7,7 +9,11 @@ type Input = {
   userId: string;
 };
 
-const leave = async (Database: typeof DatabasePort, input: Input) => {
+const leave = async (
+  Database: typeof DatabasePort,
+  Board: typeof BoardDomain,
+  input: Input
+) => {
   const room = await Database.findById(input.roomId);
 
   if (!room) {
@@ -35,6 +41,11 @@ const leave = async (Database: typeof DatabasePort, input: Input) => {
     players: currentPlayers,
     status: isRoomEmpty ? RoomStatus.DELETED : room.status,
     owner: hasOwnerLeft ? currentPlayers[0] : room.owner,
+  });
+
+  await Board.removePlayer({
+    playerId: input.userId,
+    roomId: input.roomId,
   });
 
   return;

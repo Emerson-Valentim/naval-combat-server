@@ -1,16 +1,18 @@
-import Database from "./ports/database";
-import _list from "./list";
+import Board from "../board";
+
 import _create from "./create";
-import _registerSocket from "./register-socket";
-import _join from "./join";
 import _get from "./get";
+import _join from "./join";
 import _leave from "./leave";
+import _list from "./list";
+import Database from "./ports/database";
+import _registerSocket from "./register-socket";
 
 export default {
-  create: _create(Database),
+  create: _create(Database, Board),
   registerSocket: _registerSocket(Database),
   list: _list(Database),
-  join: _join(Database),
-  leave: _leave(Database),
-  get: _get(Database)
+  join: _join(Database, Board),
+  leave: _leave(Database, Board),
+  get: _get(Database),
 };
