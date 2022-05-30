@@ -9,6 +9,7 @@ import { IOHandler } from "../../config/tools";
 interface RoomSocketEvents {
   "server:create:room": (message: any) => void;
   "server:join:room": (message: any) => void;
+  "server:setup:room": (message: any) => void;
   "client:room:refresh": (message: any) => void;
   "client:room:ready": (message: any) => void;
   "client:room:acknowledge": (message: any) => void;
@@ -159,6 +160,20 @@ const register = (
         message: payload.message,
       },
     });
+  });
+
+  socket.on("server:setup:room", async (message: any) => {
+    const payload = await IOHandler.handleOrigin<{
+      roomId: string;
+    }>("server:setup:room", message, socket);
+
+    IOHandler.toRoom(payload.roomId, {
+      channel: "client:room:update",
+      message: {
+        action: "turn",
+      },
+    });
+
   });
 };
 
