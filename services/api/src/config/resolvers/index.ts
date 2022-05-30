@@ -5,6 +5,7 @@ import {
   room as RoomDomain,
   skin as SkinDomain,
   user as UserDomain,
+  board as BoardDomain,
 } from "@naval-combat-server/domains";
 
 import { NavalCombatSocket } from "../../ports/notification";
@@ -32,6 +33,8 @@ import signOut from "./user/sign-out";
 import updateRoles from "./user/update-roles";
 import selectSkin from "./user/select-skin";
 import initialSetup from "./setup/initial-setup";
+import individualSetup from "./board/individual-setup";
+import getBoard from "./board/get-board";
 
 export const resolvers = {
   Query: {
@@ -136,6 +139,18 @@ export const resolvers = {
       _args: any,
       { accessTokenData }: ServerContext
     ) => selectSkin(UserDomain, accessTokenData, _args.input),
+    individualSetup: async (
+      _parent: any,
+      _args: any,
+      { accessTokenData }: ServerContext
+    ) =>
+      individualSetup(
+        NavalCombatSocket,
+        BoardDomain,
+        RoomDomain,
+        accessTokenData,
+        _args.input
+      ),
   },
   User: {
     skin: async (
@@ -144,4 +159,11 @@ export const resolvers = {
       { accessTokenData }: ServerContext
     ) => getSkin(SkinDomain, UserDomain, accessTokenData),
   },
+  Room: {
+    board: async (
+      _parent: any,
+      _args: any,
+      { accessTokenData }: ServerContext
+    ) => getBoard(BoardDomain, _parent.id, accessTokenData),
+  }
 };

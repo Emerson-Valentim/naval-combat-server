@@ -1,6 +1,8 @@
 import { gql } from "apollo-server";
 
 export const typeDefs = gql`
+  scalar BoardState
+
   enum Roles {
     admin
     user
@@ -105,6 +107,16 @@ export const typeDefs = gql`
     user: CreateUserInput!
   }
 
+  input Position {
+    row: Int!
+    column: Int!
+  }
+
+  input IndividualSetupInput {
+    roomId: String!
+    positions: [Position]
+  }
+
   type User {
     id: ID!
     email: String!
@@ -160,6 +172,7 @@ export const typeDefs = gql`
     players: [String]
     limit: Int!
     status: RoomStatus
+    board: Board!
   }
 
   type Funds {
@@ -167,6 +180,18 @@ export const typeDefs = gql`
     username: String!
     status: FundsStatus!
     value: Int!
+  }
+  
+  type Board {
+    currentPlayer: String!
+    size: Int!
+    status: BoardStatus!
+    state: BoardState!
+  }
+
+  enum BoardStatus {
+    PENDING
+    DONE
   }
 
   enum RoomType {
@@ -206,6 +231,7 @@ export const typeDefs = gql`
     requestFunds(input: RequestFundsInput!): Boolean
     approveFunds(input: ApproveFundsInput!): Boolean
     selectSkin(input: SelectSkinInput!): Boolean
+    individualSetup(input: IndividualSetupInput!): Boolean
   }
 
   type Query {
