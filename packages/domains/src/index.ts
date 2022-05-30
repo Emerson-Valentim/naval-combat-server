@@ -5,6 +5,7 @@ import _accessToken from "./access-token";
 import _room from "./room";
 import _skin from "./skin";
 import _funds from "./funds";
+import _board from "./board";
 
 export const secrets = _secrets;
 export const encryption = _encryption;
@@ -13,3 +14,4 @@ export const accessToken = _accessToken;
 export const room = _room;
 export const skin = _skin;
 export const funds = _funds;
+export const board = _board;
