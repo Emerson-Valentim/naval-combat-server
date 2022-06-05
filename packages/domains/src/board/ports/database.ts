@@ -10,6 +10,7 @@ export enum TileStatus {
 export enum BoardStatus {
   PENDING = "PENDING",
   DONE = "DONE",
+  FINISHED = "FINISHED",
 }
 
 interface Position {
