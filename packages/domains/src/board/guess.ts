@@ -37,8 +37,7 @@ const guess = async (
   boardRow[input.position.y] = updatedTileStatus;
 
   await Database.update({
-    // @ts-expect-error needs to configure mongo driver
-    id: board._id,
+    id: board.id,
     currentPlayer: input.userId,
     state: {
       ...board.state,

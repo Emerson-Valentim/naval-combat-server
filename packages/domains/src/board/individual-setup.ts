@@ -62,8 +62,7 @@ const individualSetup = async (
   ).length;
 
   await Database.update({
-    // @ts-expect-error needs to configure mongo driver
-    id: board._id,
+    id: board.id,
     state: board.state,
     status: isMissingSetup ? BoardStatus.PENDING : BoardStatus.DONE,
     currentPlayer: roomPlayers.find((id) => id !== board.currentPlayer),

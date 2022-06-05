@@ -36,7 +36,6 @@ export interface Board {
 }
 
 const BoardSchema = {
-  id: String,
   roomId: String,
   size: Number,
   currentPlayer: String,
@@ -113,7 +112,7 @@ const findBy = async (filter: { [key: string]: any }): Promise<Board> => {
 
   const board = await entity.findOne(filter);
 
-  return board?.toJSON();
+  return board.toJSON();
 };
 
 const findById = async (id: string): Promise<Board | null> => {

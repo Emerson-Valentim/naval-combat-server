@@ -18,7 +18,7 @@ const getPending = async (
   const pendingFunds = funds.map(async (fund) => {
 
     return {
-      id: (fund as any)._id,
+      id: fund.id,
       username: (await User.get(fund.userId, "id")).username,
       status: fund.status,
       value: fund.value
