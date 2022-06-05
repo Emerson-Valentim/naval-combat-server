@@ -4,7 +4,7 @@ class APILogger extends _CLogger {
   public static maskedLog(message: unknown, keysToMask: string[]) {
     const newMessage = APILogger.maskSensitiveData(message, keysToMask);
 
-    CLogger.log(JSON.stringify(newMessage, null, 2), true);
+    //CLogger.log(JSON.stringify(newMessage, null, 2), true);
   }
 
   private static maskSensitiveData(data: any, fields: string[]) {

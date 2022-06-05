@@ -1,14 +1,14 @@
-import { buildMock as buildBoardMock } from "../../board/__tests__/board-factory";
+import { buildBoard, buildMock as buildBoardMock } from "../../board/__tests__/board-factory";
 import { buildMock as buildUserMock } from "../../user/__tests__/user-factory";
 import leave from "../leave";
 import { RoomStatus } from "../ports/database";
 
 import { buildMock as buildRoomMock, buildRoom } from "./room-factory";
 
-const buildMock = ({ database }: any = {}) => {
+const buildMock = ({ database, boardMock }: any = {}) => {
   return {
     Database: buildRoomMock(database),
-    Board: buildBoardMock(),
+    Board: buildBoardMock(boardMock),
     User: buildUserMock(),
   };
 };
@@ -59,6 +59,9 @@ test("should DELETE room because players list is empty", async () => {
     database: {
       findById: jest.fn().mockResolvedValue(room),
     },
+    boardMock: {
+      removePlayer: jest.fn().mockResolvedValue(buildBoard())
+    }
   });
 
   await leave(Database, Board, User, input);
@@ -86,6 +89,9 @@ test("should UPDATE room's owner because it left", async () => {
     database: {
       findById: jest.fn().mockResolvedValue(room),
     },
+    boardMock: {
+      removePlayer: jest.fn().mockResolvedValue(buildBoard())
+    }
   });
 
   await leave(Database, Board, User, input);

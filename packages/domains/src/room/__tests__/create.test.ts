@@ -30,6 +30,7 @@ test("should update existing rooms status to DELETED", async () => {
   const { Database, Board, Socket } = buildMock({
     database: {
       findBy: jest.fn().mockResolvedValue(rooms),
+      create: jest.fn().mockResolvedValue(rooms[0])
     },
   });
 
@@ -56,6 +57,7 @@ test("should create a new room", async () => {
   const { Database, Board, Socket } = buildMock({
     database: {
       findBy: jest.fn().mockResolvedValue([]),
+      create: jest.fn().mockResolvedValue(buildRoom())
     },
   });
 

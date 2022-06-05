@@ -23,8 +23,7 @@ const addPlayer = async (Database: typeof DatabasePort, input: Input) => {
   }
 
   await Database.update({
-    // @ts-expect-error needs to configure mongo driver
-    id: board._id,
+    id: board.id,
     state: {
       ...board.state,
       [input.playerId]: playerState,
