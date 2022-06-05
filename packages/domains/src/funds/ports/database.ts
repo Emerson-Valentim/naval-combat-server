@@ -16,7 +16,6 @@ export interface Funds {
 }
 
 const RoomSchema = {
-  id: String,
   userId: String,
   agentId: String,
   value: Number,
@@ -38,13 +37,13 @@ const create = async (
 ): Promise<Funds> => {
   const entity = await getEntity();
 
-  const createdRoom: Funds = await entity.create({
+  const createFund: Funds = await entity.create({
     ...input,
     status: FundsStatus.PENDING,
     agentId: ""
   });
 
-  return createdRoom;
+  return createFund;
 };
 
 const update = async ({
@@ -57,9 +56,9 @@ const update = async ({
 
   await entity.findByIdAndUpdate(id, input);
 
-  const room = await entity.findById(id);
+  const funds = await entity.findById(id);
 
-  return room;
+  return funds;
 };
 
 const findBy = async (filter: {
@@ -69,7 +68,7 @@ const findBy = async (filter: {
 
   const funds = await entity.find(filter);
 
-  return funds;
+  return funds.map(fund => fund.toJSON());
 };
 
 const findById = async (id: string): Promise<Funds | null> => {

@@ -14,6 +14,7 @@ import _updateRoles from "./update-roles";
 import _list from "./list";
 import _addBalance from "./add-balance";
 import _selectSkin from "./select-skin";
+import _computeMeta from "./compute-meta";
 
 export default {
   create: _create(Database, Skin),
@@ -25,5 +26,6 @@ export default {
   updateRoles: _updateRoles(Database),
   list: _list(Database),
   addBalance: _addBalance(Database),
-  selectSkin: _selectSkin(Database, Skin)
+  selectSkin: _selectSkin(Database, Skin),
+  computeMeta: _computeMeta(Database)
 };

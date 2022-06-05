@@ -1,6 +1,8 @@
 import { gql } from "apollo-server";
 
 export const typeDefs = gql`
+  scalar BoardState
+
   enum Roles {
     admin
     user
@@ -9,6 +11,10 @@ export const typeDefs = gql`
 
   input ExampleInput {
     value: String!
+  }
+
+  input PublicProfileInput {
+    userId: String!
   }
 
   input CreateUserInput {
@@ -105,6 +111,23 @@ export const typeDefs = gql`
     user: CreateUserInput!
   }
 
+  input Position {
+    row: Int!
+    column: Int!
+  }
+
+  input IndividualSetupInput {
+    roomId: String!
+    positions: [Position]
+  }
+
+  input BoardGuessInput {
+    roomId: String!
+    userId: String!
+    x: Int!
+    y: Int!
+  }
+
   type User {
     id: ID!
     email: String!
@@ -113,6 +136,17 @@ export const typeDefs = gql`
     skin: UserSkin!
     roles: [Roles]!
     balance: Int!
+  }
+
+  type PublicUser {
+    id: ID!
+    username: String!
+    meta: UserMeta!
+    skin: PublicUserSkin!
+  }
+
+  type PublicUserSkin {
+    current: Skin!
   }
 
   type UserSkin {
@@ -160,6 +194,7 @@ export const typeDefs = gql`
     players: [String]
     limit: Int!
     status: RoomStatus
+    board: Board!
   }
 
   type Funds {
@@ -167,6 +202,18 @@ export const typeDefs = gql`
     username: String!
     status: FundsStatus!
     value: Int!
+  }
+  
+  type Board {
+    currentPlayer: String!
+    size: Int!
+    status: BoardStatus!
+    state: BoardState!
+  }
+
+  enum BoardStatus {
+    PENDING
+    DONE
   }
 
   enum RoomType {
@@ -206,6 +253,8 @@ export const typeDefs = gql`
     requestFunds(input: RequestFundsInput!): Boolean
     approveFunds(input: ApproveFundsInput!): Boolean
     selectSkin(input: SelectSkinInput!): Boolean
+    individualSetup(input: IndividualSetupInput!): Boolean
+    boardGuess(input: BoardGuessInput!): Boolean
   }
 
   type Query {
@@ -216,5 +265,6 @@ export const typeDefs = gql`
     getSkins: [Skin]
     getUsers: [User]
     getPendingFunds: [Funds]
+    getPublicProfile(input: PublicProfileInput!): PublicUser
   }
 `;

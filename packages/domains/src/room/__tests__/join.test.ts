@@ -1,3 +1,4 @@
+import { buildMock as buildBoardMock } from "../../board/__tests__/board-factory";
 import join from "../join";
 
 import { buildMock as buildRoomMock, buildRoom } from "./room-factory";
@@ -8,16 +9,17 @@ const buildMock = ({ database }: any = {}) => {
     Socket: {
       emit: jest.fn().mockResolvedValue(true),
     },
+    Board: buildBoardMock()
   };
 };
 
 beforeEach(jest.clearAllMocks);
 
 test("should throw an error because room does not exist", async () => {
-  const { Database, Socket } = buildMock();
+  const { Database, Board, Socket } = buildMock();
 
   await expect(
-    join(Database, Socket, {
+    join(Database, Board, Socket, {
       roomId: "room-id",
       userId: "user-id",
     })
@@ -27,7 +29,7 @@ test("should throw an error because room does not exist", async () => {
 });
 
 test("should throw an error because room is full", async () => {
-  const { Database, Socket } = buildMock({
+  const { Database, Board, Socket } = buildMock({
     database: {
       findById: jest.fn().mockResolvedValue(
         buildRoom({
@@ -38,7 +40,7 @@ test("should throw an error because room is full", async () => {
   });
 
   await expect(
-    join(Database, Socket, {
+    join(Database, Board, Socket, {
       roomId: "room-id",
       userId: "user-id2",
     })
@@ -46,7 +48,7 @@ test("should throw an error because room is full", async () => {
 });
 
 test("should not update room if user is already on room", async () => {
-  const { Database, Socket } = buildMock({
+  const { Database, Board, Socket } = buildMock({
     database: {
       findById: jest.fn().mockResolvedValue(
         buildRoom({
@@ -56,7 +58,7 @@ test("should not update room if user is already on room", async () => {
     },
   });
 
-  await join(Database, Socket, {
+  await join(Database, Board, Socket, {
     roomId: "room-id",
     userId: "user-id",
   });
@@ -74,13 +76,13 @@ test("should update room with new user and emit a socket", async () => {
     userId: "user-id2",
   };
 
-  const { Database, Socket } = buildMock({
+  const { Database, Board, Socket } = buildMock({
     database: {
       findById: jest.fn().mockResolvedValue(room),
     },
   });
 
-  await join(Database, Socket, input);
+  await join(Database, Board, Socket, input);
 
   expect(Database.update).toBeCalledWith({
     id: "room-id",

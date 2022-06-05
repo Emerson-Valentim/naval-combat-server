@@ -93,7 +93,7 @@ const create = async (user: UserInput) => {
 const update = async ({
   id,
   ...input
-}: (Pick<User, "socketId"> | Pick<User, "skin" | "balance" | "roles">) & {
+}: (Pick<User, "socketId"> | Pick<User, "skin" | "balance" | "roles" | "meta">) & {
   id: string;
 }): Promise<User> => {
   const entity = await getEntity();

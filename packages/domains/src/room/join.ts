@@ -1,5 +1,7 @@
 import { curry } from "ramda";
 
+import BoardDomain from "../board";
+
 import DatabasePort from "./ports/database";
 
 type Input = {
@@ -9,6 +11,7 @@ type Input = {
 
 const join = async (
   Database: typeof DatabasePort,
+  Board: typeof BoardDomain,
   Socket: { emit: (input: { channel: string; message: any }) => void },
   input: Input
 ) => {
@@ -18,7 +21,7 @@ const join = async (
     throw new Error("Room not found");
   }
 
-  if(room.players.includes(input.userId)) {
+  if (room.players.includes(input.userId)) {
     return;
   }
 
@@ -29,6 +32,11 @@ const join = async (
   await Database.update({
     id: input.roomId,
     players: [...room.players, input.userId],
+  });
+
+  await Board.addPlayer({
+    playerId: input.userId,
+    roomId: input.roomId,
   });
 
   await Socket.emit({
