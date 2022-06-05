@@ -2,6 +2,7 @@ import { curry } from "ramda";
 
 import { Socket } from "../@types/socket";
 import { Room } from "../room/ports/database";
+import UserDomain from "../user";
 
 import DatabasePort, { BoardStatus, TileStatus } from "./ports/database";
 import { parseObject } from "./utils/parse-object";
@@ -14,6 +15,7 @@ type Input = {
 
 const individualSetup = async (
   Database: typeof DatabasePort,
+  User: typeof UserDomain,
   Socket: Socket,
   input: Input
 ) => {
@@ -23,7 +25,9 @@ const individualSetup = async (
     throw new Error("Board not found");
   }
 
-  if (input.room.players.length < 2) {
+  const roomPlayers = input.room.players;
+
+  if (roomPlayers.length < 2) {
     throw new Error("Room is not ready");
   }
 
@@ -62,8 +66,16 @@ const individualSetup = async (
     id: board._id,
     state: board.state,
     status: isMissingSetup ? BoardStatus.PENDING : BoardStatus.DONE,
-    currentPlayer: input.room.players.find((id) => id !== board.currentPlayer),
+    currentPlayer: roomPlayers.find((id) => id !== board.currentPlayer),
   });
+
+  if(!isMissingSetup) {
+    for (const playerId of roomPlayers) {
+      const player = await User.get(playerId, "id");
+
+      await User.computeMeta(player, "matches");
+    }
+  }
 
   await Socket.emit({
     channel: "server:setup:room",

@@ -16,14 +16,16 @@ const removePlayer = async (Database: typeof DatabasePort, input: Input) => {
 
   const { [input.playerId]: _removedPlayer, ...state } = board.state;
 
-  await Database.update({
+  const isBoardRunning = board.status === BoardStatus.DONE;
+
+  const newBoard = await Database.update({
     // @ts-expect-error needs to configure mongo driver
     id: board._id,
     state: state,
-    status: BoardStatus.PENDING,
+    status: isBoardRunning ? BoardStatus.FINISHED : BoardStatus.PENDING,
   });
 
-  return;
+  return newBoard;
 };
 
 export default curry(removePlayer);
