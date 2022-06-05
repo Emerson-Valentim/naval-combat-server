@@ -10,6 +10,7 @@ interface RoomSocketEvents {
   "server:create:room": (message: any) => void;
   "server:join:room": (message: any) => void;
   "server:setup:room": (message: any) => void;
+  "server:guess:room": (message: any) => void;
   "client:room:refresh": (message: any) => void;
   "client:room:ready": (message: any) => void;
   "client:room:acknowledge": (message: any) => void;
@@ -173,7 +174,41 @@ const register = (
         action: "turn",
       },
     });
+  });
 
+  socket.on("server:guess:room", async (message: any) => {
+    const payload = await IOHandler.handleOrigin<{
+      roomId: string;
+      isGameOver: boolean;
+      winner: string;
+      loser: string;
+    }>("server:guess:room", message, socket);
+
+    if (payload.isGameOver) {
+      await dependencies.roomDomain.end(payload.roomId);
+
+      await dependencies.userDomain.computeMeta(
+        await dependencies.userDomain.get(payload.winner, "id"),
+        "wins"
+      );
+
+      await dependencies.userDomain.computeMeta(
+        await dependencies.userDomain.get(payload.loser, "id"),
+        "loses"
+      );
+    }
+
+    IOHandler.toRoom(payload.roomId, {
+      channel: "client:room:update",
+      message: {
+        action: "turn",
+        data: {
+          isGameOver: payload.isGameOver,
+          winner: payload.winner,
+          loser: payload.loser,
+        },
+      },
+    });
   });
 };
 
