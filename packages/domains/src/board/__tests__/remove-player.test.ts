@@ -9,7 +9,7 @@ const buildMock = ({ database }: any = {}) => {
   };
 };
 
-describe("addPlayer()", () => {
+describe("removePlayer()", () => {
   beforeEach(jest.clearAllMocks);
 
   const board = buildBoard();
