@@ -13,6 +13,10 @@ export const typeDefs = gql`
     value: String!
   }
 
+  input PublicProfileInput {
+    userId: String!
+  }
+
   input CreateUserInput {
     email: String!
     username: String!
@@ -117,6 +121,13 @@ export const typeDefs = gql`
     positions: [Position]
   }
 
+  input BoardGuessInput {
+    roomId: String!
+    userId: String!
+    x: Int!
+    y: Int!
+  }
+
   type User {
     id: ID!
     email: String!
@@ -125,6 +136,17 @@ export const typeDefs = gql`
     skin: UserSkin!
     roles: [Roles]!
     balance: Int!
+  }
+
+  type PublicUser {
+    id: ID!
+    username: String!
+    meta: UserMeta!
+    skin: PublicUserSkin!
+  }
+
+  type PublicUserSkin {
+    current: Skin!
   }
 
   type UserSkin {
@@ -232,6 +254,7 @@ export const typeDefs = gql`
     approveFunds(input: ApproveFundsInput!): Boolean
     selectSkin(input: SelectSkinInput!): Boolean
     individualSetup(input: IndividualSetupInput!): Boolean
+    boardGuess(input: BoardGuessInput!): Boolean
   }
 
   type Query {
@@ -242,5 +265,6 @@ export const typeDefs = gql`
     getSkins: [Skin]
     getUsers: [User]
     getPendingFunds: [Funds]
+    getPublicProfile(input: PublicProfileInput!): PublicUser
   }
 `;

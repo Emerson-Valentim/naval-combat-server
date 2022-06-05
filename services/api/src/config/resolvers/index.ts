@@ -35,6 +35,8 @@ import selectSkin from "./user/select-skin";
 import initialSetup from "./setup/initial-setup";
 import individualSetup from "./board/individual-setup";
 import getBoard from "./board/get-board";
+import getPublicProfile from "./user/get-public-profile";
+import guess from "./board/guess";
 
 export const resolvers = {
   Query: {
@@ -59,6 +61,10 @@ export const resolvers = {
       _args: any,
       { accessTokenData }: ServerContext
     ) => getPendingFunds(FundsDomain, accessTokenData),
+    getPublicProfile: (
+      _parent: any,
+      _args: any,
+    ) => getPublicProfile(UserDomain, SkinDomain, _args.input),
   },
   Mutation: {
     initialSetup: async (_parent: any, _args: any) =>
@@ -139,6 +145,17 @@ export const resolvers = {
       _args: any,
       { accessTokenData }: ServerContext
     ) => selectSkin(UserDomain, accessTokenData, _args.input),
+    boardGuess: async (
+      _parent: any,
+      _args: any,
+      { accessTokenData }: ServerContext
+    ) =>
+      guess(
+        NavalCombatSocket,
+        BoardDomain,
+        _args.input,
+        accessTokenData
+      ),
     individualSetup: async (
       _parent: any,
       _args: any,
