@@ -19,8 +19,7 @@ const removePlayer = async (Database: typeof DatabasePort, input: Input) => {
   const isBoardRunning = board.status === BoardStatus.DONE;
 
   const newBoard = await Database.update({
-    // @ts-expect-error needs to configure mongo driver
-    id: board._id,
+    id: board.id,
     state: state,
     status: isBoardRunning ? BoardStatus.FINISHED : BoardStatus.PENDING,
   });
