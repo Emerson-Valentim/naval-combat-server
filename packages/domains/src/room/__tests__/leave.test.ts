@@ -1,4 +1,5 @@
 import { buildMock as buildBoardMock } from "../../board/__tests__/board-factory";
+import { buildMock as buildUserMock } from "../../user/__tests__/user-factory";
 import leave from "../leave";
 import { RoomStatus } from "../ports/database";
 
@@ -7,17 +8,18 @@ import { buildMock as buildRoomMock, buildRoom } from "./room-factory";
 const buildMock = ({ database }: any = {}) => {
   return {
     Database: buildRoomMock(database),
-    Board: buildBoardMock()
+    Board: buildBoardMock(),
+    User: buildUserMock(),
   };
 };
 
 beforeEach(jest.clearAllMocks);
 
 test("should throw an error because room does not exist", async () => {
-  const { Database, Board } = buildMock();
+  const { Database, Board, User } = buildMock();
 
   await expect(
-    leave(Database, Board, {
+    leave(Database, Board, User, {
       roomId: "room-id",
       userId: "user-id",
     })
@@ -27,13 +29,13 @@ test("should throw an error because room does not exist", async () => {
 });
 
 test("should not update room if user id is not a player", async () => {
-  const { Database, Board } = buildMock({
+  const { Database, Board, User } = buildMock({
     database: {
       findById: jest.fn().mockResolvedValue(buildRoom()),
     },
   });
 
-  await leave(Database, Board, {
+  await leave(Database, Board, User, {
     roomId: "room-id",
     userId: "user-id2",
   });
@@ -53,13 +55,13 @@ test("should DELETE room because players list is empty", async () => {
     userId: "user-id",
   };
 
-  const { Database, Board } = buildMock({
+  const { Database, Board, User } = buildMock({
     database: {
       findById: jest.fn().mockResolvedValue(room),
     },
   });
 
-  await leave(Database, Board, input);
+  await leave(Database, Board, User, input);
 
   expect(Database.update).toBeCalledWith({
     id: input.roomId,
@@ -80,13 +82,13 @@ test("should UPDATE room's owner because it left", async () => {
     userId: "user-id",
   };
 
-  const { Database, Board } = buildMock({
+  const { Database, Board, User } = buildMock({
     database: {
       findById: jest.fn().mockResolvedValue(room),
     },
   });
 
-  await leave(Database, Board, input);
+  await leave(Database, Board, User, input);
 
   expect(Database.update).toBeCalledWith({
     id: input.roomId,
