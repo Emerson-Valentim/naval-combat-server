@@ -1,6 +1,8 @@
 import { curry } from "ramda";
 
 import BoardDomain from "../board";
+import UserDomain from "../user";
+import { BoardStatus } from "../board/ports/database";
 
 import DatabasePort, { RoomStatus } from "./ports/database";
 
@@ -12,6 +14,7 @@ type Input = {
 const leave = async (
   Database: typeof DatabasePort,
   Board: typeof BoardDomain,
+  User: typeof UserDomain,
   input: Input
 ) => {
   const room = await Database.findById(input.roomId);
@@ -43,10 +46,22 @@ const leave = async (
     owner: hasOwnerLeft ? currentPlayers[0] : room.owner,
   });
 
-  await Board.removePlayer({
+  const board = await Board.removePlayer({
     playerId: input.userId,
     roomId: input.roomId,
   });
+
+  const isBoardFinished = board.status === BoardStatus.FINISHED;
+
+  if (!isBoardFinished) {
+    return;
+  }
+
+  const winner = await User.get(currentPlayers[0], "id");
+  await User.computeMeta(winner, "wins");
+
+  const loser = await User.get(input.userId, "id");
+  await User.computeMeta(loser, "loses");
 
   return;
 };
