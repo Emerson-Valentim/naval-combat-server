@@ -55,13 +55,24 @@ const guess = async (
     isGameOver = true;
   }
 
+  const isTileDestroyed = updatedTileStatus === TileStatus.DESTROYED;
+
+  const eventPayload = isGameOver ? {
+    loser: input.userId,
+    winner: board.currentPlayer,
+  } : {
+    happy: isTileDestroyed ? board.currentPlayer : "",
+    sad: isTileDestroyed ? input.userId : ""
+  };
+
   await Socket.emit({
     channel: "server:guess:room",
     message: {
       roomId: board.roomId,
-      isGameOver,
-      loser: input.userId,
-      winner: board.currentPlayer,
+      data: {
+        isGameOver,
+        ...eventPayload
+      }
     },
   });
 
