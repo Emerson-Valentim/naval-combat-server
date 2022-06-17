@@ -179,34 +179,34 @@ const register = (
   socket.on("server:guess:room", async (message: any) => {
     const payload = await IOHandler.handleOrigin<{
       roomId: string;
-      isGameOver: boolean;
-      winner: string;
-      loser: string;
+      data: {
+        isGameOver: boolean;
+        [key: string]: any;
+      };
     }>("server:guess:room", message, socket);
-
-    if (payload.isGameOver) {
+    if (payload?.data?.isGameOver) {
       await dependencies.roomDomain.end(payload.roomId);
 
-      await dependencies.userDomain.computeMeta(
-        await dependencies.userDomain.get(payload.winner, "id"),
-        "wins"
-      );
+      if (payload.data?.winner) {
+        await dependencies.userDomain.computeMeta(
+          await dependencies.userDomain.get(payload.data?.winner, "id"),
+          "wins"
+        );
+      }
 
-      await dependencies.userDomain.computeMeta(
-        await dependencies.userDomain.get(payload.loser, "id"),
-        "loses"
-      );
+      if (payload.data?.loser) {
+        await dependencies.userDomain.computeMeta(
+          await dependencies.userDomain.get(payload.data?.loser, "id"),
+          "loses"
+        );
+      }
     }
 
     IOHandler.toRoom(payload.roomId, {
       channel: "client:room:update",
       message: {
         action: "turn",
-        data: {
-          isGameOver: payload.isGameOver,
-          winner: payload.winner,
-          loser: payload.loser,
-        },
+        data: payload.data
       },
     });
   });
